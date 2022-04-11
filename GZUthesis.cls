@@ -10,6 +10,7 @@
 \RequirePackage{ifthen}
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
+\RequirePackage[backend = biber, style=biblatex/gb7714_2015]{biblatex}
 % \RequirePackage{setspace}
 % \setstretch{1.2} 
 \newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt}

@@ -6,3 +6,7 @@
 *.synctex.gz
 *.xdv
 *.out
+*.blg
+*.bcf
+*.bbl
+*.run.xml
