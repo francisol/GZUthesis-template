@@ -5,11 +5,14 @@
 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
 \ProvidesClass{GZUthesis}[2022/04/30 v0.1 GZUthesis]
-\LoadClass[cs4size,a4paper,fancyhdr,fntef]{book}
+\LoadClass[cs4size,a4paper,fancyhdr,fntef]{article}
 \RequirePackage{ctex}
 \RequirePackage{ifthen}
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
+\RequirePackage{etoolbox}
+\RequirePackage{appendix}
+\RequirePackage{setspace,titletoc,fancyhdr,pdfpages,caption}
 \RequirePackage[backend = biber, style=biblatex/gb7714_2015]{biblatex}
 % \RequirePackage{setspace}
 % \setstretch{1.2} 
@@ -45,9 +48,31 @@
 \newcommand{\infodeatailfont}{\heiti\fontsize{16pt}{\baselineskip}}
 
 
-\newenvironment{abstract}[1][摘要]{%
+% 修改“目录”样式
+\renewcommand*\contentsname{\centerline{目录} } 
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\titlecontents{section}[0pt]{\addvspace{2pt}\filright}
+{\contentspush{\thecontentslabel }\ }
+{}{\titlerule*[8pt]{.}\contentspage}
+\titlecontents{subsection}[2em]{\addvspace{2pt}\filright}
+{\contentspush{\thecontentslabel }\ }
+{20pt}{\titlerule*[8pt]{.}\contentspage}
+\titlecontents{subsubsection}[4em]{\addvspace{2pt}\filright}
+{\contentspush{\thecontentslabel }\ }
+{20pt}{\titlerule*[8pt]{.}\contentspage}
+
+\ctexset{bibname=\centering{参考文献}}
+% 重定义摘要
+\renewenvironment{abstract}[1][摘要]{%
+\section*{\ }
 \centerline{\abstractHeadFont \uppercase{#1}}
-    \par
+	\addcontentsline{toc}{section}{\uppercase{#1}}
+	\songti\fontsize{12pt}{\baselineskip}
+	\font\rm="Times New Roman" at 12pt \rm
+	\selectfont
+	\par
 	\abstractContentFont
 }{\newline}
 
@@ -78,3 +103,44 @@
 	\thispagestyle{empty}
 	\newpage
 }
+\renewcommand{\bibfont}{\setstretch{1} \zihao{5} \heiti \font\rm="SimSun" at 10.5pt \rm}
+% 致谢
+\newenvironment{thank}{
+	% \begin{center}
+		% \heiti \fontsize{15pt}{\baselineskip} \section*{致谢}
+		\section*{\centerline{致谢}}
+		\addcontentsline{toc}{section}{致谢}
+	% \end{center}
+}{}
+
+\renewcommand{\captionfont}{\zihao{5} \heiti \font\rm="SimHei" at 10.5pt \rm }
+\newcommand\page{
+	\pagenumbering{Roman}
+	% \pagestyle{fancy}
+}
+\newcommand\content{
+	\pagenumbering{arabic}
+	% \chead{
+	% 	\begin{spacing}{0.5}
+	% 		\fontsize{12pt}{\baselineskip}\heiti 贵州大学本科毕业论文（设计）
+	% 	\end{spacing}
+	% }
+	% \lhead{\ \ \ \ \ \ \ \ \ \ \  \includegraphics[width=1.91cm]{figures/login.jpg}}
+	% \rhead{
+	% 	\begin{spacing}{0.5}
+	% 		\fontsize{12pt}{\baselineskip} 第\ \ \thepage \ \ 页
+	% 	\end{spacing}
+	% }
+	% \cfoot{}
+	% \pagestyle{fancy}
+}
+
+
+\defbibheading{bibliography}[\bibname]{%
+  \section*{\centering 参考文献}%
+  \addcontentsline{toc}{section}{参考文献}
+}
+
+\newcommand{\promise}{\includepdf{figures/page.pdf}}
+
+\renewcommand{\appendixname}{Appendix~\Alph{section}}

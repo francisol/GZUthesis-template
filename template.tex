@@ -8,10 +8,11 @@
 \stuid{(学号)}
 \title{论文题目}
 \date{2022年4月}
-
+\addbibresource{reference.bib} % 参考文献
 \begin{document}
 
 \maketitle
+\page
 \begin{abstract}
     这是一段摘要。
 \end{abstract}
@@ -23,7 +24,28 @@
 \end{abstract}
 \keywords[Key words:]{PC; AI}
 \newpage
-Contnt
+\tableofcontents
+\newpage
+\content
+\section{引言}
+\subsection{二级目录}
+\subsubsection{三级目录}
 
+20世纪90年代，物联网的出现早已出现端倪。比尔盖茨曾在他的著作《未来之路》中，描写了未来世界物联网出现的场景，但是其并未对这种未来技术命名。\cite{gates1995road}同时期，就职于美国麻省理工学院的Kevin Ash-ton教授首次提出了物联网的概念。90年代末期，美国麻省理工学院提出“万物皆可通过网络互联”的思想，并依托于射频识别（RFID）技术得以实现。
+中文引用\cite{孙其博2010物联网}
 
+\newpage
+% 致谢
+\begin{thank}
+    听我说谢谢你因为有你温暖了四季
+\end{thank}
+\newpage\printbibliography
+\newpage
+\appendix
+\renewcommand{\appendixname}{Appendix~\Alph{section}}
+\section{会议}
+内容...
+\section{会议2}
+
+\promise
 \end{document}
