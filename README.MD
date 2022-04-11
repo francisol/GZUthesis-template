@@ -2,4 +2,4 @@
 制作方: 贵州大学计算机科学与技术学院
 
 
-![format](img\format.png)
+![format](img/format.png)
