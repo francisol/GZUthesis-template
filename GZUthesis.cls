@@ -26,6 +26,18 @@
 % 变量定义
 \def\@isdoctor{0} %是否是博士 默认为 否
 \def\@address{中国﹒贵州﹒贵阳} % 地址
+\def\@secretary{}
+\def\@expertlist{}
+\def\@chairman{}
+\def\@major{}
+\def\@research{}
+\def\@supervisor{}
+\def\@stuid{}
+\def\@title{}
+\def\@author{}
+\def\@enrollmentyear{}
+\def\@defensedate{\today}
+\def\@defenseaddress{中国}
 \newcommand\major[1]{\def\@major{#1}} % 学科专业
 \newcommand\research[1]{\def\@research{#1}} %研究方向
 \newcommand\supervisor[1]{\def\@supervisor{#1}} % 导师
@@ -35,7 +47,12 @@
 \newcommand{\enrollmentyear}[1]{\def\@enrollmentyear{#1}} %入学日期
 \newcommand{\doctor}{\def\@isdoctor{1}} %指定博士格式
 \newcommand{\address}[1][中国﹒贵州﹒贵阳]{\def\@address{#1}} % 指定地址
-
+\newcommand{\secretary}[1][]{\def\@secretary{#1}}
+\newcommand{\defensedate}[1][]{\def\@defensedate{#1}}
+\newcommand{\defenseaddress}[1][]{\def\@defenseaddress{#1}}
+% 答辩专家
+\newcommand{\expert}[1]{\listadd{\@expertlist}{#1}}
+\newcommand{\chairman}[1]{\def\@chairman{#1}}
 % 格式定义 控制显示格式
 \newcommand{\abstractHeadFont}{\zihao{-2}\arialf\heiti}
 \newcommand{\abstractContentFont}{\songti \zihao{4}}
@@ -50,7 +67,7 @@
 \newcommand{\infodeatailfont}{\heiti\fontsize{16pt}{\baselineskip}}
 \newcommand{\defensemaintitlefont}{\heiti\fontsize{22pt}{\baselineskip}}
 \newcommand{\defensetitlefont}{\heiti\fontsize{18pt}{\baselineskip}}
-\newcommand{\defensecontentfont}{\heiti\fontsize{15pt}{\baselineskip}}
+\newcommand{\defensecontentfont}{\heiti \zihao{-3}}
 
 
 % 修改“目录”样式
@@ -85,9 +102,7 @@
 	\keywordsheadfont #1 %
 	\keywordscontentfont
 }
-% 答辩专家
-\newcommand{\expert}[1]{\listadd{\@expertlist}{#1}}
-\newcommand{\chairman}[1]{\def\@chairman{#1}}
+
 % 封面制作
 \newcommand{\makecover}{
 	\noindent  \faceinfofont 分\ \ 类\ \ 号：\dlmu[2cm]{} \hfill 密级：\dlmu[2cm]{} \newline
@@ -112,24 +127,29 @@
 }
 %  答辩名单
 \newcommand{\makedefenselist}{
+	~\\[37pt]
 	\centerline{\defensemaintitlefont  \ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士学位论文答辩委员会名单}
-	~\\[33pt]
+	~\\[57pt]
 	\centerline{\defensetitlefont \@title}
-	~\\[45pt]
+	~\\[50pt]
 	% \begin{center}
 	% 	\defensecontentfont\fbox{
 	% 	答辩人:
 	% }
 	% \end{center}
+	\renewcommand{\do}[1]{##1 \newline}%
 	\par
-	\hangindent 10em
-\hangafter=0
-\noindent \defensecontentfont 
-答辩人： \@author \newline
-答辩委员会委员：\newline
-\@chairman \newline
-  \renewcommand{\do}[1]{##1 \newline}%
-  \dolistloop\@expertlist
+	\begin{spacing}{1.75}
+		\defensecontentfont \hangindent 10em \hangafter=0 \noindent
+ 答辩人： \@author \newline
+	答辩委员会委员：\newline
+	\@chairman \newline
+	\dolistloop\@expertlist
+	答辩秘书：\@secretary\newline
+	答辩时间：\@defensedate\newline
+	答辩地点：\@defenseaddress\newline
+		\end{spacing}
+		\thispagestyle{empty}
 }
 
 \renewcommand{\maketitle}{
@@ -177,7 +197,3 @@
 }
 
 \newcommand{\promise}{\includepdf{figures/page.pdf}}
-
-% \ctexset{
-% 	appendix/name={附录},
-% }
