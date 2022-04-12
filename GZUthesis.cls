@@ -11,9 +11,11 @@
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
 \RequirePackage{etoolbox}
-\RequirePackage{appendix}
+\RequirePackage[title,toc]{appendix}
 \RequirePackage{setspace,titletoc,fancyhdr,pdfpages,caption}
 \RequirePackage[backend = biber, style=biblatex/gb7714_2015]{biblatex}
+\renewcommand{\appendixname}{附录}
+\renewcommand{\appendixtocname}{附录}
 % \RequirePackage{setspace}
 % \setstretch{1.2} 
 \newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt}
@@ -46,6 +48,9 @@
 \newcommand{\addressfont}{\heiti \zihao{4}}
 \newcommand{\datefont}{\heiti \zihao{4}}
 \newcommand{\infodeatailfont}{\heiti\fontsize{16pt}{\baselineskip}}
+\newcommand{\defensemaintitlefont}{\heiti\fontsize{22pt}{\baselineskip}}
+\newcommand{\defensetitlefont}{\heiti\fontsize{18pt}{\baselineskip}}
+\newcommand{\defensecontentfont}{\heiti\fontsize{15pt}{\baselineskip}}
 
 
 % 修改“目录”样式
@@ -80,8 +85,11 @@
 	\keywordsheadfont #1 %
 	\keywordscontentfont
 }
-
-\renewcommand{\maketitle}{
+% 答辩专家
+\newcommand{\expert}[1]{\listadd{\@expertlist}{#1}}
+\newcommand{\chairman}[1]{\def\@chairman{#1}}
+% 封面制作
+\newcommand{\makecover}{
 	\noindent  \faceinfofont 分\ \ 类\ \ 号：\dlmu[2cm]{} \hfill 密级：\dlmu[2cm]{} \newline
 	\noindent\faceinfofont 论文编号：\dlmu[2cm]{\@stuid} \newline
 	\\[42pt]
@@ -101,6 +109,33 @@
 	\centerline{\addressfont \@address}
 	\centerline{\datefont \@date}
 	\thispagestyle{empty}
+}
+%  答辩名单
+\newcommand{\makedefenselist}{
+	\centerline{\defensemaintitlefont  \ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士学位论文答辩委员会名单}
+	~\\[33pt]
+	\centerline{\defensetitlefont \@title}
+	~\\[45pt]
+	% \begin{center}
+	% 	\defensecontentfont\fbox{
+	% 	答辩人:
+	% }
+	% \end{center}
+	\par
+	\hangindent 10em
+\hangafter=0
+\noindent \defensecontentfont 
+答辩人： \@author \newline
+答辩委员会委员：\newline
+\@chairman \newline
+  \renewcommand{\do}[1]{##1 \newline}%
+  \dolistloop\@expertlist
+}
+
+\renewcommand{\maketitle}{
+	\makecover
+	\newpage
+	\makedefenselist
 	\newpage
 }
 \renewcommand{\bibfont}{\setstretch{1} \zihao{5} \heiti \font\rm="SimSun" at 10.5pt \rm}
@@ -143,4 +178,6 @@
 
 \newcommand{\promise}{\includepdf{figures/page.pdf}}
 
-\renewcommand{\appendixname}{Appendix~\Alph{section}}
+% \ctexset{
+% 	appendix/name={附录},
+% }
