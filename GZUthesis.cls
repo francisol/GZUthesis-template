@@ -47,9 +47,9 @@
 \newcommand{\enrollmentyear}[1]{\def\@enrollmentyear{#1}} %入学日期
 \newcommand{\doctor}{\def\@isdoctor{1}} %指定博士格式
 \newcommand{\address}[1][中国﹒贵州﹒贵阳]{\def\@address{#1}} % 指定地址
-\newcommand{\secretary}[1][]{\def\@secretary{#1}}
-\newcommand{\defensedate}[1][]{\def\@defensedate{#1}}
-\newcommand{\defenseaddress}[1][]{\def\@defenseaddress{#1}}
+\newcommand{\secretary}[1]{\def\@secretary{#1}}
+\newcommand{\defensedate}[1]{\def\@defensedate{#1}}
+\newcommand{\defenseaddress}[1]{\def\@defenseaddress{#1}}
 % 答辩专家
 \newcommand{\expert}[1]{\listadd{\@expertlist}{#1}}
 \newcommand{\chairman}[1]{\def\@chairman{#1}}
@@ -131,7 +131,7 @@
 	\centerline{\defensemaintitlefont  \ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士学位论文答辩委员会名单}
 	~\\[57pt]
 	\centerline{\defensetitlefont \@title}
-	~\\[50pt]
+	~\\[55pt]
 	% \begin{center}
 	% 	\defensecontentfont\fbox{
 	% 	答辩人:
@@ -139,7 +139,7 @@
 	% \end{center}
 	\renewcommand{\do}[1]{##1 \newline}%
 	\par
-	\begin{spacing}{1.75}
+	\begin{spacing}{1.65}
 		\defensecontentfont \hangindent 10em \hangafter=0 \noindent
  答辩人： \@author \newline
 	答辩委员会委员：\newline
