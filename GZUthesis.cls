@@ -1,8 +1,11 @@
 % 
 % 贵州大学研究生学位论文模板
 % 制作方: 贵州大学计算机科学与技术学院
-% 作  者: 谢仲涛
-
+% 作  者: XXX
+% \printversion    打印版本
+% \evaluateversion 送审版本
+% \submitversion   提交版本
+% \draftversion    草稿版本
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
 \ProvidesClass{GZUthesis}[2022/04/30 v0.1 GZUthesis]
 \LoadClass[cs4size,a4paper,fancyhdr,fntef]{article}
