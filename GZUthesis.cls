@@ -23,7 +23,7 @@
 % \setstretch{1.2} 
 % \newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt}
 \newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}}
-\geometry{a4paper,top=3cm,bottom=2.5cm,left=2.6cm,right=2.6cm}
+\geometry{a4paper,top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
 \RequirePackage{fontspec}
 \newfontfamily\arialf{Arial}
 \setmainfont{Times New Roman}
@@ -115,10 +115,17 @@
 
 % 封面制作 参数为下划线长度
 \newcommand{\makecover}[1][6cm]{
-	~\\[0.001pt]
-	\noindent  \faceinfofont  分\ \ 类\ \ 号：\dlmu[2cm]{} \hfill 密级：\dlmu[2cm]{} \newline
-	\noindent\faceinfofont 论文编号：\dlmu[2cm]{\@stuid} \newline
-	\\[43.2pt]
+	{
+		\vspace{10em}
+		\setstretch{0.1}
+		~\\[0.1pt]
+		%
+		\setstretch{0.85}
+		\noindent  \faceinfofont  分\ \ 类\ \ 号：\dlmu[2cm]{} \hfill 密级：\dlmu[2cm]{} \newline
+		\noindent\faceinfofont 论文编号：\dlmu[2cm]{\@stuid} \newline
+	
+	}
+	~\\[43.2pt]
 	\centerline{\schoolnamefont 贵\ \ \ \ 州\ \ \ \ 大\ \ \ \ 学}\\[2.5pt]
 	\centerline{\facetitlefont \@enrollmentyear 届\ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士研究生学位论文}\newline
 	\\[90pt]
@@ -150,9 +157,9 @@
 }
 %  答辩名单
 \newcommand{\makedefenselist}{
-	~\\[37pt]
+	~\\[25pt]
 	\centerline{\defensemaintitlefont  \ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士学位论文答辩委员会名单}
-	~\\[57pt]
+	~\\[32pt]
 	\begin{center}
 		\defensetitlefont	
 		\begin{minipage}[t][\@multititleheight][t]{\@multititlewidth}
@@ -162,7 +169,7 @@
 		\end{minipage}
 	\end{center}
 	% \centerline{\defensetitlefont \@title}
-	~\\[55pt]
+	~\\[30pt]
 	% \begin{center}
 	% 	\defensecontentfont\fbox{
 	% 	答辩人:
