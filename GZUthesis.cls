@@ -21,7 +21,8 @@
 \renewcommand{\appendixtocname}{附录}
 % \RequirePackage{setspace}
 % \setstretch{1.2} 
-\newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt}
+% \newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt}
+\newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}}
 \geometry{a4paper,top=3cm,bottom=2.5cm,left=2.6cm,right=2.6cm}
 \RequirePackage{fontspec}
 \newfontfamily\arialf{Arial}
@@ -41,6 +42,9 @@
 \def\@enrollmentyear{}
 \def\@defensedate{\today}
 \def\@defenseaddress{中国}
+%% 定义控制变量
+\def\@multititlewidth{14cm} %题目宽度
+\def\@multititleheight{4.5em} %题目最多三行
 \newcommand\major[1]{\def\@major{#1}} % 学科专业
 \newcommand\research[1]{\def\@research{#1}} %研究方向
 \newcommand\supervisor[1]{\def\@supervisor{#1}} % 导师
@@ -63,11 +67,12 @@
 \newcommand{\keywordscontentfont}{\songti \zihao{4}}
 \newcommand{\schoolnamefont}{\heiti \zihao{3}}
 \newcommand{\facetitlefont}{\heiti \zihao{-3}}
-\newcommand{\faceinfofont}{\songti \fontsize{10pt}{0pt}}
+\newcommand{\faceinfofont}{\songti \zihao{5}}
 \newcommand{\maintitlefont}{\heiti \zihao{2}}
 \newcommand{\addressfont}{\heiti \zihao{4}}
 \newcommand{\datefont}{\heiti \zihao{4}}
-\newcommand{\infodeatailfont}{\heiti\fontsize{16pt}{\baselineskip}}
+% \newcommand{\infodeatailfont}{\heiti\fontsize{16pt}{\baselineskip}}
+\newcommand{\infodeatailfont}{\heiti\zihao{-3}}
 \newcommand{\defensemaintitlefont}{\heiti\fontsize{22pt}{\baselineskip}}
 \newcommand{\defensetitlefont}{\heiti\fontsize{18pt}{\baselineskip}}
 \newcommand{\defensecontentfont}{\heiti \zihao{-3}}
@@ -106,26 +111,41 @@
 	\keywordscontentfont
 }
 
-% 封面制作
-\newcommand{\makecover}{
-	\noindent  \faceinfofont 分\ \ 类\ \ 号：\dlmu[2cm]{} \hfill 密级：\dlmu[2cm]{} \newline
+
+
+% 封面制作 参数为下划线长度
+\newcommand{\makecover}[1][6cm]{
+	~\\[0.001pt]
+	\noindent  \faceinfofont  分\ \ 类\ \ 号：\dlmu[2cm]{} \hfill 密级：\dlmu[2cm]{} \newline
 	\noindent\faceinfofont 论文编号：\dlmu[2cm]{\@stuid} \newline
-	\\[42pt]
-	\centerline{\schoolnamefont 贵\ \ \ \ 州\ \ \ \ 大\ \ \ \ 学}\newline
+	\\[43.2pt]
+	\centerline{\schoolnamefont 贵\ \ \ \ 州\ \ \ \ 大\ \ \ \ 学}\\[2.5pt]
 	\centerline{\facetitlefont \@enrollmentyear 届\ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士研究生学位论文}\newline
-	\\[110pt]
-	\centerline{\maintitlefont \@title}\newline
-	\\[95pt]
+	\\[90pt]
 	\begin{center}
-		\infodeatailfont
-		\textbf{学科专业：} \dlmu{\@major}\newline
-		\textbf{研究方向：} \dlmu{\@research} \newline
-		\textbf{导\ \ \ \ \ \ \ \ 师：} \dlmu{\@supervisor} \newline
-		\textbf{研\ \ 究\ \ 生：} \dlmu{\@author}\newline
-		\\[48.5pt]
+		\maintitlefont	
+		\begin{minipage}[c][\@multititleheight][t]{\@multititlewidth}
+			\begin{center}
+				\@title
+			\end{center}
+		\end{minipage}
 	\end{center}
-	\centerline{\addressfont \@address}
+	~\\[5pt]
+	\begin{center}
+		\setstretch{1.055}
+		\infodeatailfont
+		\textbf{学科专业：} \dlmu[#1]{\@major}\\[0pt]
+		\textbf{研究方向：} \dlmu[#1]{\@research} \\
+		\textbf{导\ \ \ \ \ \ \ \ 师：} \dlmu[#1]{\@supervisor} \\
+		\textbf{研\ \ 究\ \ 生：} \dlmu[#1]{\@author}\\[70pt]
+	\end{center}
+	{
+		
+		\centerline{\addressfont \@address}
+		\setstretch{1.6}
 	\centerline{\datefont \@date}
+	}
+	
 	\thispagestyle{empty}
 }
 %  答辩名单
@@ -133,7 +153,15 @@
 	~\\[37pt]
 	\centerline{\defensemaintitlefont  \ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士学位论文答辩委员会名单}
 	~\\[57pt]
-	\centerline{\defensetitlefont \@title}
+	\begin{center}
+		\defensetitlefont	
+		\begin{minipage}[t][\@multititleheight][t]{\@multititlewidth}
+			\begin{center}
+				\@title
+			\end{center}
+		\end{minipage}
+	\end{center}
+	% \centerline{\defensetitlefont \@title}
 	~\\[55pt]
 	% \begin{center}
 	% 	\defensecontentfont\fbox{
