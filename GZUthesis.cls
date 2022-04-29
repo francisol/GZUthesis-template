@@ -320,4 +320,8 @@
   \addcontentsline{toc}{section}{参考文献}
 }
 
-\newcommand{\promise}{\includepdf{figures/page.pdf}}
+\newcommand{\promise}{
+	\ifthenelse{\isundefined{\printversion}}{}{
+		\includepdf{figures/page.pdf}
+	}
+}
