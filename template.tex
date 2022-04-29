@@ -1,13 +1,13 @@
 \documentclass[]{GZUthesis}
-
-\enrollmentyear{2021}
+\graduationyear{2021}
 \major{学科专业}
 \research{研究方向}
 \author{学生}
 \supervisor{导师}
 \stuid{(学号)}
 \title{论文题目}
-\date{2022年4月}
+\def\evaluateversion{} %输出盲审版本
+\def\printversion{}   % 输出打印版本
 
 \chairman{贵州大学\ 张XX\ 教授}
 \expert{贵州大学\ 李XX\ 教授}
@@ -16,6 +16,16 @@
 \expert{贵州大学\ 刘XX\ 教授}
 \secretary{张三\ 学士}
 \addbibresource{reference.bib} % 参考文献
+
+
+
+
+\def\parsecommitdate#1年#2月#3\endparse{%
+%   \date{\formatdate{#3}{#2}{#1}}%
+\zhdigits{#1}年 \uwave{\hskip3pt \zhdigits{#2}\hskip3pt }月
+}
+
+\edef\@date{\today}
 \begin{document}
 
 \maketitle
@@ -34,12 +44,14 @@
 \tableofcontents
 \newpage
 \content
-\section{引言}
-\subsection{二级目录}
-\subsubsection{三级目录}
+% \section{引言}
+% \subsection{二级目录}
+% \subsubsection{三级目录}
 
-20世纪90年代，物联网的出现早已出现端倪。比尔盖茨曾在他的著作《未来之路》中，描写了未来世界物联网出现的场景，但是其并未对这种未来技术命名。\cite{gates1995road}同时期，就职于美国麻省理工学院的Kevin Ash-ton教授首次提出了物联网的概念。90年代末期，美国麻省理工学院提出“万物皆可通过网络互联”的思想，并依托于射频识别（RFID）技术得以实现。
-中文引用\cite{孙其博2010物联网}
+% dui
+
+\expandafter\parseevaluatedate\@date\endparse
+
 
 \newpage
 % 致谢
