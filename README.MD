@@ -21,7 +21,8 @@
 - \submitversion   提交版本
 - \draftversion    草稿版本
 ## 使用
-默认是硕士版本使用 `\isdoctor` 命令切换博士版本。
+默认是硕士版本使用 `\doctor` 命令切换博士版本。
+本文档在Tex live 2021 版本以及 MikTeX 22.3版本编译通过
 
 日期需使用中文分割如`\date{20XX年XX月}` 或者 `\date{20XX年XX月XX日}`
 ### 版本控制
