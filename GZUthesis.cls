@@ -8,8 +8,9 @@
 % \draftversion    草稿版本
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
 \ProvidesClass{GZUthesis}[2022/04/30 v0.1 GZUthesis]
+\PassOptionsToClass{\CurrentOption}{article}
 \LoadClass[cs4size,a4paper,fancyhdr,fntef]{article}
-\RequirePackage{ctex}
+\RequirePackage[UTF8,zihao=-4]{ctex}
 \RequirePackage{ifthen}
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
@@ -55,11 +56,13 @@
 %% 打印版日期格式
 \def\parseprintdate#1年#2月#3\endparse{%
 %   \date{\formatdate{#3}{#2}{#1}}%
-\zhdigits{#1}年 \zhdigits{#2}月
+%\zhdigits{#1}年 \zhdigits{#2}月
+#1 年 #2 月
 }
 %% 送审版日期格式
 \def\parseevaluatedate#1年#2月#3\endparse{%
-\zhdigits{#1}年 \uwave{\hskip3pt \zhdigits{#2}\hskip3pt }月%
+% \zhdigits{#1}年 \uwave{\hskip3pt \zhdigits{#2}\hskip3pt }月%
+#1年 \uwave{\hskip3pt #2 \hskip3pt }月%
 }
 \newcommand\major[1]{\def\@major{#1}} % 学科专业
 \newcommand\research[1]{\def\@research{#1}} %研究方向
@@ -78,8 +81,8 @@
 \newcommand{\expert}[1]{\listadd{\@expertlist}{#1}}
 \newcommand{\chairman}[1]{\def\@chairman{#1}}
 % 格式定义 控制显示格式
-\newcommand{\abstractHeadFont}{\zihao{-2}\arialf\heiti}
-\newcommand{\abstractContentFont}{\songti \zihao{4}}
+\newcommand{\abstractheadfont}{\zihao{-2}\heiti \font\rm="Arial" at 18pt \rm\selectfont} %摘要标题字体
+\newcommand{\abstractcontentfont}{\songti \zihao{4} \font\rm="Times New Roman" at 12pt \rm\selectfont} % 摘要内容字体
 \newcommand{\keywordsheadfont}{\heiti \zihao{4}}
 \newcommand{\keywordscontentfont}{\songti \zihao{4}}
 \newcommand{\schoolnamefont}{\heiti \zihao{3}}
@@ -126,13 +129,10 @@
 % 重定义摘要
 \renewenvironment{abstract}[1][摘要]{%
 \section*{\ }
-\centerline{\abstractHeadFont \uppercase{#1}}
+\centerline{\abstractheadfont \uppercase{#1}}
 	\addcontentsline{toc}{section}{\uppercase{#1}}
-	\songti\fontsize{12pt}{\baselineskip}
-	\font\rm="Times New Roman" at 12pt \rm
-	\selectfont
 	\par
-	\abstractContentFont
+	\abstractcontentfont
 }{\newline}
 
 \newcommand{\keywords}[1][关键词：]{

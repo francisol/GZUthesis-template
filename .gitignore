@@ -1,8 +1,9 @@
+! figures/*
+template.pdf
 *.fls
 *.aux
 *latexmk
 *.log
-*.pdf
 *.synctex.gz
 *.xdv
 *.out
