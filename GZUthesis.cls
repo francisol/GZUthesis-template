@@ -8,32 +8,44 @@
 % \draftversion    草稿版本
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
 \ProvidesClass{GZUthesis}[2022/04/30 v0.1 GZUthesis]
+\RequirePackage{xkeyval}
+\RequirePackage{ifthen}
+
+\define@choicekey*+{GZUthesis}{type}[\val\position]{doctor,master,bachelor}[master]{%
+  \def\@type{#1}
+  \ifcase\position\relax
+  \def\@degree{博}
+  \or%
+  \def\@degree{硕}
+  \or
+  \def\@degree{学}
+  \fi
+}{%
+  \ClassError{GZUthesis}{Neplatná hodnota argumentu lang: #1}
+}
+\ProcessOptionsX<GZUthesis>
 \PassOptionsToClass{\CurrentOption}{article}
 \LoadClass[cs4size,a4paper,fancyhdr,fntef]{article}
-\RequirePackage[UTF8,zihao=-4]{ctex}
-\RequirePackage{ifthen}
+\RequirePackage[UTF8,zihao=-4,heading=true]{ctex}
+
+
+
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
 \RequirePackage{etoolbox}
 \RequirePackage[title,toc]{appendix}
 \RequirePackage{setspace,titletoc,fancyhdr,pdfpages,caption,ulem}
 \RequirePackage[backend = biber, style=biblatex/gb7714_2015]{biblatex}
-\renewcommand{\appendixname}{附录}
-\renewcommand{\appendixtocname}{附录}
-% \RequirePackage{setspace}
-% \setstretch{1.2} 
-% \newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt}
+
 \newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}}
 \newcommand\dlwave[2][4cm]{\hskip1pt\uwave{\hb@xt@ #1{\hss#2\hss}}}
 \geometry{a4paper,top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
 \RequirePackage{fontspec}
-\newfontfamily\arialf{Arial}
 \setmainfont{Times New Roman}
 
 \setCJKfamilyfont{hwxk}{STXingkai}
 % 变量定义
 \def\addrsep{ {\zihao{-1}{﹒} }}
-\def\@isdoctor{0} %是否是博士 默认为 否
 \def\@address{中国\addrsep 贵州\addrsep 贵阳} % 地址
 \def\@secretary{}
 \def\@expertlist{}
@@ -47,7 +59,9 @@
 \def\@graduationyear{}
 \edef\@defensedate{\today}
 \edef\@date{\today}
+\edef\@type{master}
 \def\@defenseaddress{中国}
+\edef\@degree{硕}
 %% 定义控制变量
 \def\@multititlewidth{14cm} %题目宽度
 \def\@multititleheight{4.5em} %题目最多三行
@@ -69,11 +83,9 @@
 \newcommand\supervisor[1]{\def\@supervisor{#1}} % 导师
 \newcommand\stuid[1]{\def\@stuid{#1}} % 学号
 \renewcommand\title[1]{\def\@title{#1} \hypersetup{pdftitle={#1}}} %论文题目
-\renewcommand\author[1]{\def\@author{#1} \hypersetup{pdfauthor={#1},pdfcreator={#1},pdfproducer={#1}}} % 作者
-% \renewcommand\date[1]{\def\@author{#1} \hypersetup{pdfauthor={#1},pdfcreator={#1},pdfproducer={#1}}} % 作者
-\newcommand{\graduationyear}[1]{\def\@graduationyear{#1}} %入学日期
-\newcommand{\doctor}{\def\@isdoctor{1}} %指定博士格式
-\newcommand{\address}[1][中国﹒贵州﹒贵阳]{\def\@address{#1}} % 指定地址
+\renewcommand\author[1]{\def\@author{#1} \hypersetup{pdfauthor={#1},pdfcreator={#1},pdfproducer={#1}}}% 作者
+\newcommand{\graduationyear}[1]{\def\@graduationyear{#1}\hypersetup{pdfsubject={#1 届\@degree 士研究生学位论文}}} %毕业年份
+\newcommand{\address}[1][中国\addrsep 贵州\addrsep 贵阳]{\def\@address{#1}} % 指定地址
 \newcommand{\secretary}[1]{\def\@secretary{#1}}
 \newcommand{\defensedate}[1]{\def\@defensedate{#1}}
 \newcommand{\defenseaddress}[1]{\def\@defenseaddress{#1}}
@@ -91,7 +103,6 @@
 \newcommand{\maintitlefont}{\heiti \zihao{2}}
 \newcommand{\addressfont}{\heiti \zihao{4}}
 \newcommand{\datefont}{\heiti \zihao{4}}
-% \newcommand{\infodeatailfont}{\heiti\fontsize{16pt}{\baselineskip}}
 \newcommand{\infodeatailfont}{\heiti\zihao{-3}}
 \newcommand{\defensemaintitlefont}{\heiti\fontsize{22pt}{\baselineskip}}
 \newcommand{\defensetitlefont}{\heiti\fontsize{18pt}{\baselineskip}}
@@ -109,7 +120,8 @@
 \newcommand{\evaluatedatefont}{\heiti \zihao{4}}
 
 
-
+\renewcommand{\appendixname}{附录}
+\renewcommand{\appendixtocname}{附录}
 % 修改“目录”样式
 \renewcommand*\contentsname{\centerline{目录} } 
 
@@ -133,10 +145,10 @@
 	\addcontentsline{toc}{section}{\uppercase{#1}}
 	\par
 	\abstractcontentfont
-}{\newline}
+}{}
 
 \newcommand{\keywords}[1][关键词：]{
-	\keywordsheadfont #1 %
+	\par \noindent \keywordsheadfont #1 %
 	\keywordscontentfont
 }
 
@@ -156,7 +168,7 @@
 	}
 	~\\[43.2pt]
 	\centerline{\schoolnamefont 贵\ \ \ \ 州\ \ \ \ 大\ \ \ \ 学}\\[2.5pt]
-	\centerline{\facetitlefont \@graduationyear 届\ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士研究生学位论文}\newline
+	\centerline{\facetitlefont \@graduationyear 届\@degree 士研究生学位论文}\newline
 	\\[90pt]
 	\begin{center}
 		\maintitlefont	
@@ -188,7 +200,7 @@
 %  答辩名单
 \newcommand{\makedefenselist}{
 	~\\[25pt]
-	\centerline{\defensemaintitlefont  \ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士学位论文答辩委员会名单}
+	\centerline{\defensemaintitlefont \@degree 士学位论文答辩委员会名单}
 	~\\[32pt]
 	\begin{center}
 		\defensetitlefont	
@@ -198,13 +210,7 @@
 			\end{center}
 		\end{minipage}
 	\end{center}
-	% \centerline{\defensetitlefont \@title}
 	~\\[30pt]
-	% \begin{center}
-	% 	\defensecontentfont\fbox{
-	% 	答辩人:
-	% }
-	% \end{center}
 	\renewcommand{\do}[1]{##1 \newline}%
 	\par
 	\begin{spacing}{1.65}
@@ -220,14 +226,7 @@
 		\thispagestyle{empty}
 }
 
-% \newdateformat{dashdate}{%
-% \twodigit{\THEDAY}-\twodigit{\THEMONTH}-\THEYEAR}
-
 \newcommand{\makeevaluatecover}{
-	% \setlength{\topmargin}{100pt}%
-	% \expandafter\parseevaluatedate\@date\endparse
-
-
 	\newgeometry{top=2.18cm,left=2.6cm,right=2.6cm}
 	\setlength{\fboxsep}{20.5pt}\framebox[1\width][c]{论文编号：\dlmu[4.3cm]{}\hskip5pt}
 	~\\[33pt]
@@ -239,7 +238,7 @@
 	\setstretch{1.0}
 	\begin{center}
 		\ziju{0.060}
-		\evaluatenamefont{ \@graduationyear 届\ifthenelse{\equal{\@isdoctor}{1}}{博}{硕}士学位论文}
+		\evaluatenamefont{ \@graduationyear 届\@degree 士学位论文}
 	\end{center}
 	~\\[16.8pt]
 	\begin{center}
@@ -280,44 +279,30 @@
 		\makedefenselist
 		\newpage
 	}
+% \hypersetup{
+%     pdftitle={\@title},
+%     pdfauthor={\@author},
+
+% }
 	
 }
 \renewcommand{\bibfont}{\setstretch{1} \zihao{5} \heiti \font\rm="SimSun" at 10.5pt \rm}
 % 致谢
 \newenvironment{thank}{
-	% \begin{center}
-		% \heiti \fontsize{15pt}{\baselineskip} \section*{致谢}
+		
 		\section*{\centerline{致谢}}
 		\addcontentsline{toc}{section}{致谢}
-	% \end{center}
+		\markboth{致谢}{致谢}
 }{}
 
 \renewcommand{\captionfont}{\zihao{5} \heiti \font\rm="SimHei" at 10.5pt \rm }
-\newcommand\page{
-	\pagenumbering{Roman}
-	% \pagestyle{fancy}
-}
-\newcommand\content{
-	\pagenumbering{arabic}
-	% \chead{
-	% 	\begin{spacing}{0.5}
-	% 		\fontsize{12pt}{\baselineskip}\heiti 贵州大学本科毕业论文（设计）
-	% 	\end{spacing}
-	% }
-	% \lhead{\ \ \ \ \ \ \ \ \ \ \  \includegraphics[width=1.91cm]{figures/login.jpg}}
-	% \rhead{
-	% 	\begin{spacing}{0.5}
-	% 		\fontsize{12pt}{\baselineskip} 第\ \ \thepage \ \ 页
-	% 	\end{spacing}
-	% }
-	% \cfoot{}
-	% \pagestyle{fancy}
-}
+
 
 
 \defbibheading{bibliography}[\bibname]{%
   \section*{\centering 参考文献}%
   \addcontentsline{toc}{section}{参考文献}
+  \markboth{参考文献}{参考文献}
 }
 
 \newcommand{\promise}{
@@ -325,3 +310,49 @@
 		\includepdf{figures/page.pdf}
 	}
 }
+\AddToHook{cmd/section/before}{\clearpage}
+\fancypagestyle{mainFancy}{
+    \fancyhf{}
+    \renewcommand\headrulewidth{0.5pt}
+    \renewcommand\footrulewidth{0pt}
+	\pagenumbering{arabic}
+	\fancyhead[L]{\leftmark}
+	\fancyhead[R]{\protect\nouppercase\@title}
+    \fancyfoot[C]{\thepage}
+}
+\fancypagestyle{preContent}{
+    \fancyhf{}
+    \renewcommand\headrulewidth{0pt}
+    \renewcommand\footrulewidth{0pt}
+	\pagenumbering{roman}
+    \fancyfoot[C]{\thepage}
+}
+\newcommand\frontmatter{
+	\clearpage
+	\pagestyle{preContent}
+}
+\newcommand\mainmatter{
+	\clearpage
+	\pagestyle{mainFancy}
+}
+\ctexset{
+	section={
+		name={第,章},
+		number={\chinese{section}}
+	},
+	appendix={
+		name={附录},
+	}
+}
+\renewenvironment{appendices}{
+	\appendix\addappheadtotoc
+}{}
+\hypersetup{
+		bookmarks=true,         % show bookmarks bar?
+	unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+	pdftoolbar=true,        % show Acrobat’s toolbar?
+	pdfmenubar=true,        % show Acrobat’s menu?
+	pdffitwindow=false,     % window fit to page when opened
+	pdfstartview={FitH},
+	colorlinks=true,
+	linkcolor=black,citecolor=black,urlcolor=black}
