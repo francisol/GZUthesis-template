@@ -324,7 +324,7 @@
     \fancyhf{}
     \renewcommand\headrulewidth{0pt}
     \renewcommand\footrulewidth{0pt}
-	\pagenumbering{roman}
+	\pagenumbering{Roman}
     \fancyfoot[C]{\thepage}
 }
 \newcommand\frontmatter{
