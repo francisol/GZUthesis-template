@@ -9,7 +9,7 @@
 - [ ] 间距格式调整
 - [ ] 输出版本控制(完成部分)
 - [ ] 兼容Mac/Linux
-- [ ] 兼容 overleaf
+- [X] 兼容 overleaf
 - [ ] 兼容 学士
 - [X] 切换为book
 - [X] 答辩委员会名单
@@ -21,7 +21,7 @@
 ### 格式调整
 对行间距进行复刻
 ## 使用
-本文档在Tex live 2021 版本以及 MikTeX 22.3版本编译通过；由于overleaf 上缺少字体，暂时**不能**编译通过；没有在Linux/Mac 下测试。
+本文档在Tex live 2021 版本以及 MikTeX 22.3版本编译通过；没有在Linux/Mac 下测试。
 
 
 控制命令:
@@ -30,6 +30,7 @@
 - `\chairman` 答辩主席
 - `\expert` 答辩专家
 - `\secretary` 答辩秘书
+- `\promise` 打印承诺书
 
 模板参数：
 - `type` 模板类型,doctor 为博士master 为硕士

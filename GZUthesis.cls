@@ -161,8 +161,12 @@
 	\end{titlepage}
 	\fillblankpage
 }
-\renewcommand\maketitle{\GZUthesis@postgraduatetitle}
-
+\newcommand\GZUthesis@maketitle{\GZUthesis@postgraduatetitle}
+\renewcommand{\maketitle}{
+	\newgeometry{top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
+	\GZUthesis@maketitle
+	\restoregeometry
+}
 % 封面制作 参数为下划线长度
 \newcommand{\makecover}[1][6cm]{
 	{
@@ -310,12 +314,12 @@
 	\begin{center}
 		\heiti
 		\fontsize{16pt}{\baselineskip}
-		\textbf{学\ \ \ \ \ \ 院：} \dlmu \@college\newline
-		\textbf{专\ \ \ \ \ \ 业：} \dlmu \@major\newline
-		\textbf{班\ \ \ \ \ \ 级：} \dlmu \@class\newline
-		\textbf{学\ \ \ \ \ \ 号：} \dlmu \@stuid\newline
-		\textbf{学生姓名：} \dlmu \@author\newline
-		\textbf{指导教师：} \dlmu \@supervisor\newline
+		\textbf{学\quad\quad 院：} \dlmu[6cm]{\@college}\newline
+		\textbf{专\quad\quad 业：} \dlmu[6cm]{\@major}\newline
+		\textbf{班\quad\quad 级：} \dlmu[6cm]{\@class}\newline
+		\textbf{学\quad\quad 号：} \dlmu[6cm]{\@stuid}\newline
+		\textbf{学生姓名：} \dlmu[6cm]{\@author}\newline
+		\textbf{指导教师：} \dlmu[6cm]{\@supervisor}\newline
 		\newline\newline\newline
 		\songti\@date
 	\end{center}
@@ -455,15 +459,15 @@
 \define@choicekey*+{GZUthesis}{type}[\val\position]{doctor,master,bachelor}[master]{%
 	\ifcase\position\relax
 		\def\@degree{博}
-		\renewcommand\maketitle{\GZUthesis@postgraduatetitle}
+		\renewcommand\GZUthesis@maketitle{\GZUthesis@postgraduatetitle}
 		\renewcommand{\promise}{\GZUthesis@postgraduatepromise}
 	\or%
 		\def\@degree{硕}
-		\renewcommand\maketitle{\GZUthesis@postgraduatetitle}
+		\renewcommand\GZUthesis@maketitle{\GZUthesis@postgraduatetitle}
 		\renewcommand{\promise}{\GZUthesis@postgraduatepromise}
 	\or
 		\def\@degree{学}
-		\renewcommand\maketitle{\GZUthesis@bachelortitle}
+		\renewcommand\GZUthesis@maketitle{\GZUthesis@bachelortitle}
 		\renewcommand{\promise}{\GZUthesis@bachelorpromise}
 		\renewcommand\mainmatter{\fillpage\pagestyle{bachelorFancy}\pagenumbering{arabic}\fancypagestyle{plain}{
 				\pagestyle{bachelorFancy}}}
@@ -475,6 +479,7 @@
 \define@choicekey*+{GZUthesis}{version}[\val\position]{evaluate,print,draft}[draft]{%
 	\ifcase\position\relax
 		\renewcommand{\GZUthesis@postgraduatetitle}{\makeevaluatecover}
+		\renewcommand{\GZUthesis@bachelortitle}{\GZUthesis@bachelorcover}
 	\or%
 		\renewcommand{\GZUthesis@postgraduatetitle}{\makecover\makedefenselist}
 		\renewcommand{\GZUthesis@bachelortitle}{\GZUthesis@bachelorcover}
@@ -488,3 +493,8 @@
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptionsX<GZUthesis>
 % \ProcessOptions\relax
+\ifthenelse{\boolean{@twoside}}{%
+	\geometry{top=2.9cm,bottom=2.4cm,inner=2.9cm,outer=2.5cm}
+}{%
+	\geometry{top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
+}%
