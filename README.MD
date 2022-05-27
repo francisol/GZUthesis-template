@@ -2,7 +2,7 @@
 制作方: 贵州大学计算机科学与技术学院
 
 
-基于 article 制作，使用 xelatex 编译
+基于 book 制作，使用 xelatex 编译
 
 ![format](img/format.png)
 ## Task
@@ -11,7 +11,7 @@
 - [ ] 兼容Mac/Linux
 - [ ] 兼容 overleaf
 - [ ] 兼容 学士
-- [ ] 切换为book
+- [X] 切换为book
 - [X] 答辩委员会名单
 - [X] 附录 
 - [x] 摘要关键字
@@ -20,12 +20,6 @@
 ## 未来计划
 ### 格式调整
 对行间距进行复刻
-### 版本控制
-通过不同命令输出 不同版本的论文格式：
--  \printversion    打印版本
-- \evaluateversion 送审版本(盲审)
-- \submitversion   提交版本
-- \draftversion    草稿版本
 ## 使用
 本文档在Tex live 2021 版本以及 MikTeX 22.3版本编译通过；由于overleaf 上缺少字体，暂时**不能**编译通过；没有在Linux/Mac 下测试。
 
@@ -39,17 +33,13 @@
 
 模板参数：
 - `type` 模板类型,doctor 为博士master 为硕士
+- `version` 打印类型 evaluate(盲评版本),print(打印版本),draft(草稿)
 
 
 
 
 注意:
 日期需使用中文分割如`\date{20XX年XX月}` 或者 `\date{20XX年XX月XX日}`
-### 版本控制
-```latex
-\def\evaluateversion{} %输出盲审版本
-\def\printversion{}   % 输出打印版本
-```
 ## 例
 ```latex
 \documentclass[type=doctor]{GZUthesis} %打印博士论文。type=master 为硕士论文，默认为硕士
@@ -60,8 +50,6 @@
 \supervisor{导师}
 \stuid{(学号)}
 \title{论文题目}
-\def\evaluateversion{} %输出盲审版本
-\def\printversion{}   % 输出打印版本
 
 \chairman{贵州大学\ 张XX\ 教授}
 \expert{贵州大学\ 李XX\ 教授}
