@@ -354,7 +354,6 @@
 	\fancyhf{}
 	\renewcommand\headrulewidth{0.5pt}
 	\renewcommand\footrulewidth{0pt}
-	\pagenumbering{arabic}
 	\fancyhead[L]{\leftmark}
 	\fancyhead[R]{\protect\nouppercase\@title}
 	\ifthenelse{\boolean{@twoside}}{
@@ -412,19 +411,27 @@
 		\clearpage
 	}%
 }
+\newcommand\GZUthesis@frontmatter{
+	\fancypagestyle{plain}{
+		\pagestyle{preContent}
+	}
+}
 \renewcommand\frontmatter{
 	\fillpage
 	\pagenumbering{Roman}
-	\pagestyle{preContent}
+	\GZUthesis@frontmatter
+	\pagestyle{plain}
 }
-% \AddToHook{cmd/section/before}{\clearpage}
-\renewcommand\mainmatter{
-	\fillpage
-	\pagenumbering{arabic}
-	\pagestyle{mainFancy}
+\newcommand\GZUthesis@mainmatter{
 	\fancypagestyle{plain}{
 		\pagestyle{mainFancy}
 	}
+}
+\renewcommand\mainmatter{
+	\fillpage
+	\pagenumbering{arabic}
+	\GZUthesis@mainmatter
+	\pagestyle{plain}
 }
 
 \ctexset{
@@ -469,8 +476,7 @@
 		\def\@degree{学}
 		\renewcommand\GZUthesis@maketitle{\GZUthesis@bachelortitle}
 		\renewcommand{\promise}{\GZUthesis@bachelorpromise}
-		\renewcommand\mainmatter{\fillpage\pagestyle{bachelorFancy}\pagenumbering{arabic}\fancypagestyle{plain}{
-				\pagestyle{bachelorFancy}}}
+		\renewcommand\GZUthesis@mainmatter{\fancypagestyle{plain}{\pagestyle{bachelorFancy}}}
 	\fi
 }{%
 	\ClassError{GZUthesis}{type error: #1;select in doctor,master,bachelor }
