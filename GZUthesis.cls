@@ -44,6 +44,8 @@
 \edef\@defensedate{\today}
 \edef\@date{\today}
 \def\@defenseaddress{中国}
+\def\@security{}
+\def\@classifyno{}
 \def\@degree{硕}
 %% 定义控制变量
 \def\@multititlewidth{14cm} %题目宽度
@@ -74,6 +76,9 @@
 \newcommand{\secretary}[1]{\def\@secretary{#1}}
 \newcommand{\defensedate}[1]{\def\@defensedate{#1}}
 \newcommand{\defenseaddress}[1]{\def\@defenseaddress{#1}}
+\newcommand{\security}[1]{\def\@security{#1}}
+\newcommand{\classifyno}[1]{\def\@classifyno{#1}}
+
 % 答辩专家
 \newcommand{\expert}[1]{\listadd{\@expertlist}{#1}}
 \newcommand{\chairman}[1]{\def\@chairman{#1}}
@@ -166,6 +171,7 @@
 	\newgeometry{top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
 	\GZUthesis@maketitle
 	\restoregeometry
+	\GZUthesis@AtEndTitle
 }
 % 封面制作 参数为下划线长度
 \newcommand{\makecover}[1][6cm]{
@@ -175,7 +181,7 @@
 			~\\[0.1pt]
 			%
 			\setstretch{0.85}
-			\noindent  \faceinfofont  分\ \ 类\ \ 号：\dlmu[2cm]{} \hfill 密级：\dlmu[2cm]{} \newline
+			\noindent  \faceinfofont  分\ \ 类\ \ 号：\dlmu[2cm]{\@classifyno} \hfill 密级：\dlmu[2cm]{\@security} \newline
 			\noindent\faceinfofont 论文编号：\dlmu[2cm]{\@stuid} \newline
 
 		}
@@ -453,6 +459,9 @@
 \renewenvironment{appendices}{
 	\appendix\addappheadtotoc
 }{}
+\newcommand{\GZUthesis@AtEndDocument}{\promise}
+\newcommand{\GZUthesis@AtEndTitle}{}
+\AtEndDocument{\GZUthesis@AtEndDocument}
 \hypersetup{
 	bookmarks=true,         % show bookmarks bar?
 	unicode=false,          % non-Latin characters in Acrobat’s bookmarks
@@ -477,6 +486,8 @@
 		\renewcommand\GZUthesis@maketitle{\GZUthesis@bachelortitle}
 		\renewcommand{\promise}{\GZUthesis@bachelorpromise}
 		\renewcommand\GZUthesis@mainmatter{\fancypagestyle{plain}{\pagestyle{bachelorFancy}}}
+		\renewcommand{\GZUthesis@AtEndTitle}{\promise}
+		\renewcommand{\GZUthesis@AtEndDocument}{}
 	\fi
 }{%
 	\ClassError{GZUthesis}{type error: #1;select in doctor,master,bachelor }
