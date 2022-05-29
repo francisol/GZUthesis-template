@@ -1,11 +1,13 @@
-\documentclass[]{GZUthesis}
+\documentclass[version=evaluate,type=doctor,oneside]{GZUthesis} % 盲评博士论文，单面打印
 \graduationyear{2021}
 \major{学科专业}
 \research{研究方向}
 \author{学生}
 \supervisor{导师}
 \stuid{(学号)}
-\title{论文题目}
+\title{贵州大学研究生毕业论文模板v1.0.0}
+\security{<密级>}
+\classifyno{<分类号>}
 
 \chairman{贵州大学\ 张XX\ 教授}
 \expert{贵州大学\ 李XX\ 教授}
@@ -29,12 +31,53 @@
 \keywords[Key words:]{PC; AI}
 \tableofcontents
 \mainmatter
-\chapter{引言}
-\section{二级目录}
-\subsection{三级目录}
-20世纪90年代，物联网的出现早已出现端倪。比尔盖茨曾在他的著作《未来之路》中，描写了未来世界物联网出现的场景，但是其并未对这种未来技术命名。\cite{gates1995road}同时期，就职于美国麻省理工学院的Kevin Ash-ton教授首次提出了物联网的概念。90年代末期，美国麻省理工学院提出“万物皆可通过网络互联”的思想，并依托于射频识别（RFID）技术得以实现。
-中文引用\cite{孙其博2010物联网}
+\chapter{模板说明}
+\section{动机}
+\section{介绍}
+本模板提供贵州大学硕士博士以及本科生\footnote{本科生部分目前还不完善}版本的学位(毕业)论文模板。
+本模板依据2022年发布《贵州大学研究生学位论文格式》、《贵州大学研究生学位论文盲评封面格式》制作；
+本科生部分依据作者记忆制作\footnote{由于作者毕业太久又没有抓到本科生只好胡乱制作}。
 
+同时本本模板提供三种输出模式分别是草稿、盲审、打印。两类布局模式：单页打印、双页打印。具体内容将在以后章节介绍。
+\subsection{控制命令}
+
+\begin{itemize}
+    \item $\backslash$frontmatter 前言格式，页数格式为罗马底部居中；
+\item $\backslash$mainmatter 正文格式，页眉为章节名称以及论文题目，页脚为数字页数居中；
+\item $\backslash$chairman 答辩主席；
+\item $\backslash$expert 答辩专家；
+\item $\backslash$secretary 答辩秘书；
+\item $\backslash$security 密级；
+\item $\backslash$classifyno 分类号；
+\item $\backslash$promise 打印承诺书 研究生默认添加到文章最后，本科生默认添加到封面之后。
+\end{itemize}
+
+\subsection{使用}
+本文档在Tex live 2021 版本以及 MikTeX 22.3版本编译通过；\textbf{没有}在Linux/Mac 下测试。
+基于 book 制作，使用 xelatex 编译。
+
+\subsection{模板参数}
+\begin{itemize}
+    \item \textbf{type} 模板类型,doctor 为博士master 为硕士 bachelor为本科；
+    \item \textbf{version} 打印类型 evaluate(盲评版本),print(打印版本),draft(草稿)；
+    \item 可以通过 \textbf{oneside}、\textbf{twoside} 两个参数控制单面打印或者双面打印，默认单面。双面时会留出装订边距。
+\end{itemize}
+
+当前打印格式为 盲评博士论文单面打印，详见第一行
+
+\subsection{注意事项}
+日期需使用中文分割如
+\begin{verbatim}
+    \date{20XX年XX月}
+\end{verbatim}
+ 或者
+ \begin{verbatim}
+    \date{20XX年XX月XX日}
+\end{verbatim} \par
+
+\subsection{参考文献引用示例}
+English\cite{gates1995road}
+中文\cite{孙其博2010物联网}。
 % 致谢
 \begin{thank}
 	听我说谢谢你因为有你温暖了四季。
@@ -44,5 +87,4 @@
 \begin{appendices}
 	\chapter{参与会议}
 \end{appendices}
-\promise
 \end{document}
