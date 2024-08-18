@@ -1,0 +1,346 @@
+\documentclass{ctxdoc}
+\usepackage{ulem}
+%\usepackage[markup=underlined,authormarkup=none,commentmarkup=todo]{changes}
+\begin{document}
+    \title{The \textsf{GZUthesis} package}
+    \author{https://github.com/francisol/GZUthesis-template/}
+    \maketitle
+
+    \section*{更新历史}
+
+    \begin{itemize}
+        \item[1.0.0] (2022-08-17) 初始版本
+        \begin{itemize}
+            \item 间距格式调整
+            \item 内置华文行楷
+            \item 输出版本控制(完成部分)
+            \item 兼容Mac/Linux
+            \item 兼容 overleaf
+            \item 答辩委员会名单
+            \item 附录
+            \item 摘要关键字
+            \item 目录
+        \end{itemize}
+
+        \item[1.1.0] (2024-08-18) 重构
+        \begin{itemize}
+            \item 规避版权风险，删除了内置字体
+            \item 增加代码注释
+            \item 参考文献设置移除宏包
+        \end{itemize}
+    \end{itemize}
+
+
+    \section{说明}
+    \textbf{该文档为用户手册，并非宏包使用实例。}
+
+
+    本模板提供贵州大学硕士博士\sout{以及本科生版本的}学位(毕业)论文模板。
+    本模板依据2022年发布《贵州大学研究生学位论文格式》、《贵州大学研究生学位论文盲评封面格式》制作。
+
+    本模板亦在\href{https://www.overleaf.com/latex/templates/gui-zhou-da-xue-yan-jiu-sheng-bi-ye-lun-wen-mo-ban/tstnysppbxvh}{Overleaf} 提供
+
+    如有疑问请在 \href{https://github.com/francisol/GZUthesis-template/issues}{Github} 上提交 issues。
+
+    \section{内置信息}
+    \subsection{内置宏包}
+    \begin{description}[align=left,leftmargin=!,labelwidth=5em]
+        \item[xkeyval] 解析宏包参数，用于辅助编写宏包
+        \item[ifthen] 用于辅助编写宏包
+        \item[ctex] 中文字符处理
+        \item[geometry] 设置页边距
+        \item[hyperref] 链接
+        \item[appendix] 实现附录
+        \item[setspace] 设置行间距
+        \item[titletoc] 设置目录
+        \item[fancyhdr] 页面布局，实现页眉页脚
+        \item[pdfpages] 插入pdf文件，实现插入承诺书
+        \item[ulem] 用于实现下划线样式
+        \item[bicaption] 用于实现中英图表说明
+    \end{description}
+
+    \subsection{内置样式}
+    已增加中英文图表说明，图表默认五号黑体。
+
+    参考文献样式未在宏包中限制，但在样例文件中给出国标格式。
+
+    \section{已知问题}
+    由于平台字体限制，除windows 平台外，其他平台不能按照模板规范显示，例如 linux系统使用的不是Sim*字体，部分扩展区文字显示乱码。 在没有 Time New Roman 和Arial字体时，模板会将字体分别指定为当前系统的默认字体和无衬线字体。
+
+    中文字体由 \textbf{ctex}提供，模板并未修改。
+
+    盲审版首页 \textbf{XX 届X士研究生学位论文} 字样为华文行楷（STXINGKA），若系统无该字体则使用楷体。
+
+
+    \textbf{页面布局并未一比一复刻，但是没那么离谱。}
+
+
+    \section{使用}
+    \subsection{宏包选项}
+    \begin{function}[added=2024-08-18]{degree}
+        \begin{syntax}
+            degree = <doctor|master|bachelor>
+        \end{syntax}
+        指定该文档的学位类型，默认为博士论文（doctor）。该值仅影响文档的标题。
+    \end{function}
+    \begin{function}[added=2024-08-18]{print}
+        \begin{syntax}
+            print = <review|final|draft>
+        \end{syntax}
+        指定该文档的打印类型，默认为草稿（draft）。该值影响文档的封面以及正文之前的页面展示。
+    \end{function}
+
+    \begin{optdesc}
+        \item[review] 盲审版本，封面不显示个人信息，封面之后无附加信息。
+        \item[final] 最终版本，封面显示个人信息，封面之后显示答辩信息，最后一页显示著作权信息。
+        \item[draft] 草稿版本，用于自己校验，只显示正文。
+    \end{optdesc}
+
+    \subsection{宏包命令}
+
+    本节介绍了本包自定义和重定义的命令。
+
+    \subsubsection{信息设置类命令}
+    该类命令均保存为\cs{GZU@*}变量
+
+    \begin{function}[added=2024-08-18]{\title}
+        \begin{syntax}
+            \cs{title}\marg{论文题目} \\
+        \end{syntax}
+        该命令设置论文题目，题目展示最多三行，题目会写入到pdf文件属性中
+        \begin{texnote}
+            该命令为重定义命令
+        \end{texnote}
+    \end{function}
+
+    \begin{function}[added=2024-08-18]{\author}
+        \begin{syntax}
+            \cs{author}\marg{作者姓名} \\
+        \end{syntax}
+        该命令设置论文作者，会填充到“研究生”、“答辩人”等表格内容中，作者会写入到pdf文件属性中
+        \begin{texnote}
+            该命令为重定义命令，不会覆盖\cs{\@author}。
+        \end{texnote}
+
+    \end{function}
+
+    \begin{function}[added=2024-08-18]{\date}
+        \begin{syntax}
+            \cs{date}\marg{XXXX年XX月} \\
+        \end{syntax}
+        该命令设置日期，默认为当前时间，设置时间只会影响到封面中最后一行的年月信息显示。
+        日期格式必须为 “XXXX年XX月” 或“XXXX年XX月xx日”，否则可能会报错或显示错误。
+        \begin{texnote}
+            该命令为重定义命令，不会覆盖\cs{\@date}。答辩时间不由此设置。
+        \end{texnote}
+
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\paperno}
+        \begin{syntax}
+            \cs{paperno}\marg{论文号} \\
+        \end{syntax}
+        该命令设置论文编号，默认留空。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\defsec}
+        \begin{syntax}
+            \cs{defsec}\marg{XXX+职称/学位} \\
+        \end{syntax}
+        该命令设置答辩秘书，格式为“XXX+职称/学位”，默认留空。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\addexpert}
+        \begin{syntax}
+            \cs{addexpert}\marg{XXXXXX 大学 XXX+职称} \\
+        \end{syntax}
+        该命令为答辩专家列表添加一个专家信息，可以重复调用，只会追加信息。添加格式为 “XXXXXX 大学 XXX+职称”。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\chairman}
+        \begin{syntax}
+            \cs{chairman}\marg{XXXXXX 大学 XXX+职称} \
+        \end{syntax}
+        该命令设置答辩主席，默认留空。格式为 “XXXXXX 大学 XXX+职称”。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\major}
+        \begin{syntax}
+            \cs{major}\marg{学科专业} \\
+        \end{syntax}
+        该命令设置学科专业，默认留空。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\class}
+        \begin{syntax}
+            \cs{class}\marg{班级} \\
+        \end{syntax}
+        该命令设置班级，默认留空。
+        \begin{texnote}
+            本科模板预留参数，研究生无效。
+        \end{texnote}
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\college}
+        \begin{syntax}
+            \cs{college}\marg{学院} \\
+        \end{syntax}
+        该命令设置学院，默认留空。
+
+        \begin{texnote}
+            本科模板预留参数，研究生无效。
+        \end{texnote}
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\research}
+        \begin{syntax}
+            \cs{research}\marg{研究方向} \\
+        \end{syntax}
+        该命令设置研究方向，默认留空。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\supervisor}
+        \begin{syntax}
+            \cs{supervisor}\marg{导师} \\
+        \end{syntax}
+        该命令设置导师，默认留空。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\stuid}
+        \begin{syntax}
+            \cs{stuid}\marg{学号} \
+        \end{syntax}
+        该命令设置学号，默认留空。
+
+        \begin{texnote}
+            本科模板预留参数，研究生无效。
+        \end{texnote}
+    \end{function}
+
+
+
+    \begin{function}[added=2024-08-18]{\defaddr}
+        \begin{syntax}
+            \cs{defaddr}\marg{答辩地点} \
+        \end{syntax}
+        该命令设置答辩地点，默认留空。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\gradyear}
+        \begin{syntax}
+            \cs{gradyear}\marg{毕业年份} \
+        \end{syntax}
+        该命令设置毕业年份，默认为当前年份。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\defdate}
+        \begin{syntax}
+            \cs{defdate}\marg{答辩时间} \
+        \end{syntax}
+        该命令设置答辩时间，默认留空，免得忘记填写造成错误。
+    \end{function}
+
+
+
+
+
+    \begin{function}[added=2024-08-18]{\classifyno}
+        \begin{syntax}
+            \cs{classifyno}\marg{分类号}
+        \end{syntax}
+        该命令设置分中图类号，默认留空。
+    \end{function}
+
+    \subsubsection{控制类命令}
+
+    \begin{function}[added=2024-08-18]{\maketitle}
+        \begin{syntax}
+            \cs{maketitle}
+        \end{syntax}
+        根据本文前述信息生成封面以及答辩信息（如果有）。
+    \end{function}
+
+    \begin{function}[added=2024-08-18]{\frontmatter}
+        \begin{syntax}
+            \cs{frontmatter}
+        \end{syntax}
+        正文前样式，无页眉，页脚只保留罗马数字的页码信息
+    \end{function}
+
+    \begin{function}[added=2024-08-18]{\mainmatter}
+        \begin{syntax}
+            \cs{mainmatter}
+        \end{syntax}
+        正文样式，页眉含有章节信息以及论文题目，页脚只保留阿拉伯数字的页码信息。
+    \end{function}
+
+
+    \begin{function}[added=2024-08-18]{\keywords}
+        \begin{syntax}
+            \cs{keywords}\\
+            \cs{keywords}\marg{Key words:}
+        \end{syntax}
+        按要求格式输出关键字信息，接收一个可选参数作为关键字的名字，默认为 \textbf{关键字：}
+    \end{function}
+
+
+
+    \begin{function}[added=2024-08-18]{\acknowledgments}
+        \begin{syntax}
+            \cs{acknowledgments}\\
+            \cs{acknowledgments}\marg{致谢}
+        \end{syntax}
+        生成致谢章节，章节不编码，标题居中。命令参数为章节标题，默认为 \textbf{致谢}
+    \end{function}
+
+    \subsection{宏包环境}
+
+    \begin{environment}{abstract}
+        \begin{syntax}
+            \cs{begin}\{abstract\}[abstract] \\
+            This research investigates the latest applications and optimization techniques
+            of deep neural networks in the field of image recognition. \\
+            \cs{end}\{abstract\}
+        \end{syntax}
+        这个环境用于创建摘要章节，章节名称通过可选参数指定，默认为 \textbf{摘要}。
+        \begin{texnote}
+            abstract环境在book中不存在。
+        \end{texnote}
+    \end{environment}
+
+
+    \begin{environment}{appendices}
+        \begin{syntax}
+            \cs{begin}\{appendices\} \\
+            \cs{chapter}\{参与会议\} \\
+            \cs{end}\{appendices\}
+        \end{syntax}
+        这个环境用于创建附录章节，章节不编码，包裹在其中的章节按大写英文字母编码。
+
+        \begin{texnote}
+            使用示例：
+            \begin{verbatim}
+                \begin{appendices}
+                    \chapter{参与会议}
+                \end{appendices}
+            \end{verbatim}
+
+            目录会新增两个一级目录分别为 \textbf{附录} 、\textbf{附录 A 参与会议}。
+
+        \end{texnote}
+
+    \end{environment}
+
+\end{document}
