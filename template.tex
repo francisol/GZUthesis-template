@@ -1,5 +1,6 @@
 \documentclass[oneside,degree=master,print=review]{GZUthesis} % 盲评博士论文，单面打印
 \usepackage[backend=biber,style=gb7714-2015]{biblatex}
+
 \gradyear{2021}
 \major{学科专业}
 \research{研究方向}
@@ -29,8 +30,19 @@
     \include{chapter/abstract.tex}
     \newpage
     \tableofcontents
+
+
+    生僻字测试： 
+
+    \begin{itemize}
+        \item[\textbf{加粗}] {\textbf{囧、槑、氼、烎、垚、圐圙、嘦、嫑、怹  }}
+        \item[宋体] 囧、槑、氼、烎、垚、圐圙、嘦、嫑、怹
+    \end{itemize}
+
     \mainmatter
-    \include{chapter/intro.tex}
+
+
+    \input{chapter/intro.tex}
     \input{chapter/acknowledgments.tex}
     \input{chapter/appendices.tex}
 

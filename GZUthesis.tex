@@ -28,6 +28,10 @@
             \item 增加代码注释
             \item 参考文献设置移除宏包
         \end{itemize}
+        \item[1.1.1] (2024-08-19) 添加外部字体支持
+        \begin{itemize}
+            \item 添加外部字体支持
+        \end{itemize}
     \end{itemize}
 
 
@@ -69,7 +73,7 @@
 
     中文字体由 \textbf{ctex}提供，模板并未修改。
 
-    盲审版首页 \textbf{XX 届X士研究生学位论文} 字样为华文行楷（STXINGKA），若系统无该字体则使用楷体。
+    盲审版首页 \textbf{XX 届X士研究生学位论文} 字样为华文行楷（STXINGKA），若系统无该字体或文档目录下无STXINGKA.TTF文件，则使用楷体。
 
 
     \textbf{页面布局并未一比一复刻，但是没那么离谱。}
@@ -95,6 +99,21 @@
         \item[final] 最终版本，封面显示个人信息，封面之后显示答辩信息，最后一页显示著作权信息。
         \item[draft] 草稿版本，用于自己校验，只显示正文。
     \end{optdesc}
+    
+    
+        \begin{function}[added=2024-08-19]{windows}
+        \begin{syntax}
+            windows
+        \end{syntax}
+        若使用windows参数，则尝试在系统或者文档当前目录下搜索Sim*字体并使用，该参数仅在非windows 系统下有效。
+        \begin{description}
+            \item[宋体] 搜索系统字体 \texttt{SimSun} 或者当前目录下 \texttt{simsun.ttc}
+            \item[仿宋] 搜索系统字体 \texttt{FangSong} 或者当前目录下 \texttt{simfang.ttf}
+            \item[黑体] 搜索系统字体 \texttt{SimHei} 或者当前目录下 \texttt{simhei.ttf}
+            \item[楷体] 搜索系统字体 \texttt{KaiTi} 或者当前目录下 \texttt{simkai.ttf}
+         \end{description}
+    \end{function}
+    
 
     \subsection{宏包命令}
 
@@ -289,10 +308,10 @@
 
     \begin{function}[added=2024-08-18]{\keywords}
         \begin{syntax}
-            \cs{keywords}\\
-            \cs{keywords}\marg{Key words:}
+            \cs{keywords}\{人工智能, 机器学习\}\\
+            \cs{keywords}[Key words:]\{AI, ML\}
         \end{syntax}
-        按要求格式输出关键字信息，接收一个可选参数作为关键字的名字，默认为 \textbf{关键字：}
+        按要求格式输出关键字信息，接收两个参数，第一个参数为关键词标题,默认为 \textbf{关键字：};第二个为关键词具体内容。
     \end{function}
 
 

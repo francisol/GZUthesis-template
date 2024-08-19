@@ -4,6 +4,7 @@
 \LoadClass[cs4size,a4paper,fancyhdr,fntef,oneside]{book}
 \RequirePackage{xkeyval}
 \RequirePackage{ifthen}
+\RequirePackage{ifplatform}
 
 
 \def\GZU@university{贵州大学}
@@ -42,6 +43,10 @@
 \def\GZU@titlewidth{14cm} %题目宽度
 \def\GZU@titleheight{4.5em} %题目最多三行
 
+\def\GZU@fontname@song{}
+\def\GZU@fontname@kai{}
+\def\GZU@fontname@hei{}
+\def\GZU@fontname@fsong{}
 \def\parsedate#1年#2月#3\endparse{%
     \def\GZU@date@year{#1}
     \def\GZU@date@month{#2}
@@ -72,10 +77,10 @@
 \newif\iffinal
 \newif\ifdraft
 \newif\ifgrad %判断是否时研究生
+\newif\iffullfont
 \doctortrue
 \drafttrue
 \gradtrue
-
 
 %%% 定义文档选项 %%%
 % 定义学位类型 本硕博
@@ -119,12 +124,24 @@
 }{%
     \ClassError{GZUthesis}{print error: #1;review,final,draft }
 }
+\DeclareOption{windows}{\fullfonttrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptionsX<GZUthesis>\relax
 
 
-% 加载第三方宏包
+\RequirePackage{fontspec}
+
 \RequirePackage[UTF8,zihao=-4,heading=true]{ctex}
+
+
+
+
+
+
+
+
+% 加载第三方宏包
+
 % \RequirePackage{titlesec}
 % \RequirePackage{tocloft}
 \RequirePackage{geometry}
@@ -132,7 +149,7 @@
 % \RequirePackage{etoolbox}
 \RequirePackage[title,toc]{appendix}
 \RequirePackage{setspace,titletoc,fancyhdr,pdfpages,ulem}
-% \RequirePackage{fontspec}
+
 % \RequirePackage{caption}
 \RequirePackage{bicaption}
 
@@ -175,7 +192,8 @@
 %% 分类号
 \newcommand{\classifyno}[1]{\global\def\GZU@classifyno{#1}}
 
-% 定义字体
+
+%%%%%%%%%%%%%%%%%%%%%%%% 处理字体 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 %% 如有Times New Roman，将其作为默认字体
 \IfFontExistsTF{Times New Roman}{
     \setmainfont{Times New Roman}
@@ -186,13 +204,76 @@
     \setsansfont{Arial}
 }{
 }
+
+\newcommand{\GZU@usewindowsfont}{
+    \IfFontExistsTF{SimSun}{
+        \global\def\GZU@fontname@song{SimSun}
+    }{
+        \IfFontExistsTF{simsun.ttc}{
+            \global\def\GZU@fontname@song{simsun.ttc}
+        }{
+            \fullfontfalse
+        }
+    }
+    \IfFontExistsTF{FangSong}{
+        \global\def\GZU@fontname@fsong{FangSong}
+    }{
+        
+        \IfFontExistsTF{simfang.ttf}{
+            \global\def\GZU@fontname@fsong{simfang.ttf}
+        }{
+            \fullfontfalse
+        }
+    }
+    
+    \IfFontExistsTF{SimHei}{
+        \global\def\GZU@fontname@hei{SimHei}
+    }{
+        
+        \IfFontExistsTF{simhei.ttf}{
+            \global\def\GZU@fontname@hei{simhei.ttf}
+        }{
+            
+            \fullfontfalse
+        }
+    }
+    
+    \IfFontExistsTF{KaiTi}{
+        \global\def\GZU@fontname@kai{KaiTi}
+    }{
+        \IfFontExistsTF{simkai.ttf}{
+            \global\def\GZU@fontname@kai{simkai.ttf}
+        }{
+            
+            \fullfontfalse
+        }
+    }
+    \iffullfont
+    \setCJKmainfont[BoldFont=\GZU@fontname@hei,ItalicFont=\GZU@fontname@kai]{\GZU@fontname@song}
+    \setCJKmonofont{\GZU@fontname@fsong}
+    \setCJKfamilyfont{zhsong}{\GZU@fontname@song}
+    \setCJKfamilyfont{zhhei}{\GZU@fontname@hei}
+    \setCJKfamilyfont{zhfs}{\GZU@fontname@fsong}
+    \setCJKfamilyfont {zhkai} {\GZU@fontname@kai}
+    \fi 
+}
+
+\ifwindows\else\iffullfont
+\GZU@usewindowsfont
+\fi\fi
 %% 主题字体，如果系统存在华文行楷则使用，如果没有则使用楷书
-\IfFontExistsTF{STXINGKA.TTF}{
-    \setCJKfamilyfont{hwxk}{STXINGKA.TTF}
+\IfFontExistsTF{STXINGKA}{
+    \setCJKfamilyfont{hwxk}{STXINGKA}
     \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
 }{
-    \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{zhkai}}
+    \IfFontExistsTF{STXINGKA.TTF}{
+        \setCJKfamilyfont{hwxk}{STXINGKA.TTF}
+        \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
+    }{
+        \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{zhkai}}
+    }
 }
+
 %% 送审题目字体 一号 黑体
 \newcommand{\GZU@font@review@title}{\zihao{1} \CJKfamily+{zhhei}}
 %% 地址(贵州·z贵阳)字体 黑体四号
@@ -251,16 +332,16 @@
     \chapter*{\ }
     {
         \centering {\GZU@font@abstitle \uppercase{#1}}
-
+        
     }
     \addcontentsline{toc}{chapter}{\uppercase{#1}}
     \par
     \GZU@font@abscontent
 }{}
 %% 定义关键词环境
-\newcommand{\keywords}[1][关键词：]{
+\newcommand{\keywords}[2][关键词：]{
     \par \noindent {\GZU@font@keywstitle #1} %
-    \GZU@font@keywscontent
+    {\GZU@font@keywscontent #2}
 }
 
 
@@ -307,11 +388,11 @@
 \newcommand\GZU@mkpage@gradtitle{
     \GZU@geometry@cover
     \ifreview    \GZU@mkpage@gradreview\fi
-
+    
     \iffinal\GZU@mkpage@gradfinal\GZU@mkpage@defense\fi
-
+    
     \ifdraft\GZU@mkpage@graddraft\fi
-
+    
     \restoregeometry
 }
 
@@ -319,7 +400,7 @@
 % 制作盲审封面
 \newcommand\GZU@mkpage@gradreview{
     \newgeometry{top=2.18cm,left=2.4cm,right=2.4cm}
-
+    
     \setlength{\fboxsep}{20.5pt}\framebox[1\width][c]{\GZU@table@paperno \GZU@tablesep \dlmu[4.3cm]{}\hskip5pt}
     \vskip 50pt
     %
@@ -341,24 +422,24 @@
             \end{center}
         \end{minipage}
     \end{center}
-
-
+    
+    
     \begin{center}
         \setstretch{1.6}
         \GZU@font@review@table
         \GZU@table@major     \GZU@tablesep     \dlwave{\GZU@major}\\
         \GZU@table@research  \GZU@tablesep     \dlwave{\GZU@research}\\
     \end{center}
-
+    
     \vskip 70pt
-
+    
     \begin{center}
-
+        
         \setstretch{1.6}
         \GZU@font@review@address{\GZU@address}\\
         \GZU@font@review@date \GZU@date@year 年 \GZU@date@month 月
-
-
+        
+        
     \end{center}
     \thispagestyle{empty}
     \clearpage
@@ -366,7 +447,7 @@
 }
 %% 制作最终版封面
 \newcommand\GZU@mkpage@gradfinal{
-
+    
     {
         \vspace{10em}
         \setstretch{0.1}
@@ -376,19 +457,19 @@
         \hfill
         {\GZU@font@final@seclvl \GZU@table@seclvl\GZU@tablesep\dlmu[2cm]{\GZU@seclvl}} \newline
         \noindent{\GZU@font@final@paperno \GZU@table@key{\GZU@table@paperno} \GZU@tablesep \dlmu[2cm]{\GZU@paperno}} \newline
-
+        
     }
     \vskip 43.2pt
     {
         \noindent\centering\GZU@font@final@university \makebox[8em][s]{\GZU@university}
-
+        
     }
-
+    
     \vskip -5pt
-
+    
     {
         \noindent\centering\GZU@font@final@topic \GZU@final@topic
-
+        
     }
     \vskip 120pt
     \begin{center}
@@ -399,20 +480,20 @@
             \end{center}
         \end{minipage}
     \end{center}
-
+    
     \vskip 55pt
-
+    
     \noindent
     \begin{center}
         \setstretch{1.055}
         \GZU@font@final@table
         \GZU@table@key{\GZU@table@major} \GZU@tablesep \dlmu{\GZU@major}
-
+        
         \GZU@table@key{\GZU@table@research} \GZU@tablesep \dlmu{\GZU@research}
-
-
+        
+        
         \GZU@table@key{\GZU@table@supervisor} \GZU@tablesep \dlmu{\GZU@supervisor}
-
+        
         \GZU@table@key{\GZU@table@author} \GZU@tablesep \dlmu{\GZU@author}
     \end{center}
     \vskip 80pt
@@ -433,9 +514,9 @@
     ~\vskip 18pt
     {
         \noindent\centering \GZU@font@defense@topic   \GZU@defense@topic
-
+        
     }
-
+    
     \vskip 55pt
     \noindent
     \begin{center}
@@ -446,9 +527,9 @@
         \end{minipage}
     \end{center}
     \vskip 70pt
-
-
-
+    
+    
+    
     \hskip 65pt
     \begin{minipage}{.6\linewidth}
         \setlength{\baselineskip}{100pt}
@@ -456,16 +537,16 @@
         \begin{spacing}{1.65}
             \GZU@font@defense@main
             \GZU@defense@respondent\GZU@tablesep \GZU@author
-
+            
             \GZU@defense@committee\GZU@tablesep
-
+            
             \GZU@chairman \GZU@tablesep
-
+            
             \dolistloop\GZU@experts
             \GZU@defense@secretary\GZU@tablesep \GZU@defsec
-
+            
             \GZU@defense@date\GZU@tablesep     \GZU@defdate
-
+            
             \GZU@defense@address\GZU@tablesep   \GZU@defaddr
         \end{spacing}
     \end{minipage}
@@ -523,7 +604,7 @@
 
 %% 内部实现 正文样式
 \newcommand\GZU@mainmatter{
-
+    
     \pagestyle{GZU@main}
     \pagenumbering{arabic}
     \onehalfspacing
