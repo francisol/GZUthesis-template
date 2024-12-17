@@ -1,0 +1,251 @@
+\RequirePackage{pgfpages}
+\mode<presentation>
+% \mode<trans>
+\mode<handout>{%
+    \pgfpagesuselayout{4 on 1}[a4paper,border shrink=5mm] 
+    \setbeameroption{show notes}
+}
+\usepackage{eso-pic}
+
+\RequirePackage{amsthm}
+\RequirePackage{tikz}
+\RequirePackage{fontspec}
+\RequirePackage{xifthen, xstring}
+\useinnertheme{circles}
+\linespread{1.2}
+\def\gzu@language{en}
+\def\gzu@logosize{en}
+
+
+% 传递 notheorems 参数给 Beamer 文档类
+% 处理选项并传递 notheorems 参数给 Beamer 文档类
+
+\PassOptionsToClass{notheorems}{beamer}
+\DeclareOptionBeamer{language}{\def\gzu@language{#1}}
+
+\ProcessOptionsBeamer
+
+
+
+
+\newcommand{\gzu@makecn}{
+  \RequirePackage{ctex}
+% 开启定义各类定理
+\newtheorem{theorem}{定理}
+\newtheorem{example}{例}
+\newtheorem{definition}{定义}
+\newtheorem{lemma}{引力}
+\newtheorem{corollary}{推论}
+
+}
+
+\newcommand{\gzu@makeen}{
+% 开启定义各类定理
+\newtheorem{theorem}{Theorem}
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+}
+
+\ifthenelse{\equal{\gzu@language}{en}}{
+  \gzu@makeen
+}{
+  \ifthenelse{\equal{\gzu@language}{cn}}{
+    \gzu@makecn
+  }{
+    \PackageError{beamerthemegzu}{Invalid language option '\gzu@language'}{}
+  }
+}
+
+
+
+\setbeamertemplate{theorems}[numbered] 
+
+% \ProcessOptionsBeamer
+
+\useoutertheme[footline=authorinstitutetitle,subsection=false]{smoothbars}
+\newcommand{\frameofframes}{/}
+\newcommand{\setframeofframes}[1]{\renewcommand{\frameofframes}{#1}}
+
+
+
+
+
+% 定义 字体
+% \setbeamerfont{frametitle}{family=\kaishu, size=\large}
+% \setbeamerfont{title}{family=\kaishu}
+% \setbeamerfont{block title}{family=\kaishu}
+
+\definecolor{gzu_red}{RGB}{161, 0, 0} % 贵大红
+% 定义各类颜色
+\setbeamercolor{footline}{bg=gzu_red}
+\setbeamercolor{frametitle}{bg=gzu_red,fg=white}
+\setbeamercolor{title}{bg=gzu_red}
+
+%\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{bibliography item}[text]
+\setbeamertemplate{caption}[numbered]
+
+\setbeamercolor{palette primary}{use=structure,fg=white,bg=structure.fg}
+\setbeamercolor{palette secondary}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamercolor{palette tertiary}{use=structure,fg=white,bg=structure.fg!50!black}
+\setbeamercolor{palette quaternary}{fg=white,bg=structure.fg!50!black}
+%\setbeamercolor*{sidebar}{use=structure,bg=structure.fg}
+\setbeamercolor{titlelike}{parent=palette primary}
+
+%% try
+\setbeamercolor{fine separation line}{}
+\setbeamercolor{item projected}{fg=white}
+\setbeamercolor{palette sidebar primary}{use=normal text,fg=normal text.fg}
+\setbeamercolor{palette sidebar quaternary}{use=structure,fg=structure.fg}
+\setbeamercolor{palette sidebar secondary}{use=structure,fg=structure.fg}
+\setbeamercolor{palette sidebar tertiary}{use=normal text,fg=normal text.fg}
+%\setbeamercolor{palette sidebar quaternary}{fg=white}
+\setbeamercolor{section in sidebar}{fg=brown}
+\setbeamercolor{section in sidebar shaded}{fg=grey}
+% \setbeamerfont{section in sidebar shaded}{family=\kaishu}
+
+\setbeamercolor{separation line}{}
+\setbeamercolor{sidebar}{bg=gzu_red}
+% \setbeamerfont{sidebar}{family=\kaishu}
+\setbeamercolor{sidebar}{parent=palette primary}
+\setbeamercolor{structure}{fg=gzu_red}
+\setbeamercolor{subsection in sidebar}{fg=brown}
+\setbeamercolor{subsection in sidebar shaded}{fg=grey}
+
+\setbeamercolor{frametitle}{bg=gzu_red,fg=white}
+\setbeamercolor{title}{bg=gzu_red, fg=white}
+
+% 定义结束
+
+% 自定义标题页模板
+\setbeamertemplate{title page}{
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp]{title}
+      \usebeamerfont{title}\inserttitle\par
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.2em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%
+    \end{beamercolorbox}%
+    \vskip1em\par
+    \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp]{author}
+      \usebeamerfont{author}\insertauthor
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp]{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp]{date}
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}\vskip0.2em
+    {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+  \endgroup
+  \vfill
+  \begin{center}
+    \includegraphics[width=1.8cm]{fig/logo.eps}
+  \end{center}
+}
+% 设置底部导航栏样式
+\setbeamertemplate{footline}{%
+
+\begin{beamercolorbox}[colsep=1.5pt]{upper separation line foot}
+\end{beamercolorbox}
+
+  \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+    leftskip=.3cm,rightskip=.3cm plus1fil]{author in head/foot}%
+    \leavevmode{\usebeamerfont{author in head/foot}\insertshortauthor}%
+    \hfill%
+    {\usebeamerfont{institute in head/foot}\usebeamercolor[fg]{institute in head/foot}\insertshortinstitute}%
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+    leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+    {\usebeamerfont{title in head/foot}\insertshorttitle}%
+    \hfill%
+    {\usebeamerfont{frame number}\usebeamercolor[fg]{frame number}\insertframenumber~\frameofframes~\inserttotalframenumber}
+  \end{beamercolorbox}%
+}
+
+\setbeamertemplate{navigation symbols}{}
+
+
+
+\AtBeginSection[]{
+	\begin{frame}
+		\tableofcontents[sectionstyle=show/shaded,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+	\end{frame}
+}
+\AtBeginSubsection[]{
+	\begin{frame}
+		\tableofcontents[sectionstyle=show/shaded,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+	\end{frame}
+}
+\setbeamertemplate{caption}[numbered]
+% 设置 block 包含 定理等等
+\colorlet{block body bg}{gzu_red!10}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor{block title}{bg=gzu_red, fg=white}
+\setbeamercolor{block body}{bg=block body bg, fg=black}
+\setbeamerfont{block title}{series=\bfseries}
+
+\setbeamercolor{block title alerted}{bg=gzu_red, fg=white}
+\setbeamercolor{block body alerted}{bg=block body bg, fg=black}
+
+% 设置 example 环境样式
+\definecolor{example}{RGB}{241, 69, 24}
+\AtBeginEnvironment{example}{%
+  \setbeamercolor{block title}{bg=example, fg=white} % 定义标题的背景颜色和前景颜色
+  \setbeamercolor{block body}{bg=example!10} % 定义内容的背景颜色
+}
+\setbeamercolor{block title example}{bg=example, fg=white}
+\setbeamercolor{block body example}{bg=example!20, fg=black}
+
+% 下列样式套用的是 block，所以自定义时使用如下方法
+
+% 设置 define 环境样式
+\definecolor{definition}{RGB}{229, 153, 45}
+\AtBeginEnvironment{definition}{%
+  \setbeamercolor{block title}{bg=definition, fg=white} % 定义标题的背景颜色和前景颜色
+  \setbeamercolor{block body}{bg=definition!10} % 定义内容的背景颜色
+}
+% 设置 theorem 环境样式
+\definecolor{theorem}{RGB}{87, 117, 71}
+\AtBeginEnvironment{theorem}{%
+  \setbeamercolor{block title}{bg=theorem, fg=white} % 定义标题的背景颜色和前景颜色
+  \setbeamercolor{block body}{bg=theorem!10} % 定义内容的背景颜色
+}
+
+\DeclareTextFontCommand{\em}{\fangsong}
+\setbeamertemplate{itemize items}{\textbullet} % 设置项目符号为圆点
+\setbeamertemplate{itemize subitem}{\textendash} % 设置子项目符号为破折号
+% \setbeamerfont{itemize item}{family=\hwxk}
+\setbeamerfont{itemize/enumerate subbody}{family=\rmfamily, shape=\itshape, series=\mdseries}
+% \setbeamertemplate{itemize/enumerate body begin}{\hwxk}
+
+% \setbeamertemplate {theorems} [numbered]
+% 定义一个新的命令设置背景 logo
+
+
+\newcommand{\logobg}{
+  \setbeamertemplate{background} {
+    \begin{tikzpicture}[remember picture,overlay]
+      \node[inner sep=0pt, outer sep=0pt, opacity=0.05] at (current page.center) {
+        \includegraphics[height=0.8\paperheight]{fig/logo.eps}
+      };
+    \end{tikzpicture}
+  }
+}
+\newcommand{\linebg}{
+  \setbeamertemplate{background} {
+    \begin{tikzpicture}[remember picture,overlay]
+      \node[inner sep=0pt, outer sep=0pt, opacity=0.08, yshift=1.6cm] at (current page.south) {
+        \includegraphics[width=\paperwidth]{fig/line.png}
+      };
+    \end{tikzpicture}
+  }
+}

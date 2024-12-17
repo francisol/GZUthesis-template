@@ -1,0 +1,42 @@
+% aspectratio 指定 页面比例 1610，169，1411，54，43(默认)，32
+\documentclass[notheorems,10pt, aspectratio=169]{beamer}
+% 启用模板 使用 language 指定语言，cn 为中文 加载 ctex包并且设定中文定理环境； en 默认语言设定英文地理环境
+\usetheme[language=cn]{gzu}
+
+\usefonttheme{serif}
+\setbeamertemplate{navigation symbols}{}
+\usepackage[linesnumbered,ruled]{algorithm2e}
+
+\usepackage{subfigure}
+\title{贵州大学人工智能研究院 Beamer 模板}
+\subtitle{}
+\institute{贵州大学计算机科学与技术学院\\ 贵州大学人工智能研究院 }
+\author{AAA 兰泽}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% 线稿背景
+\linebg
+% logo 背景
+% \logobg
+\begin{frame}
+    \tableofcontents[sectionstyle=show,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+\end{frame}
+
+\section{模板简介}
+\begin{frame}
+   没啥可介绍的，自己看本文件注释。
+
+   包含功能: 为各种block 加了颜色。
+
+
+   项目里有一个 .latexmkrc 文件,使用 latexmk 编译时会把输出文件都扔到 out文件夹，保持当前目录整洁。
+\end{frame}
+    
+   
+
+\end{document}
