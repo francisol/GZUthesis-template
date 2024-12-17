@@ -33,7 +33,7 @@ xelatex GZUthesis.tex
 ```
 编译示例文档
 ```bash
-xelatex template.tex
+xelatex final_thesis.tex
 ```
 
 ## beamer 模板
