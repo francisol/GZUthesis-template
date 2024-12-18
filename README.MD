@@ -35,6 +35,18 @@ xelatex GZUthesis.tex
 ```bash
 xelatex final_thesis.tex
 ```
+#### 使用 latexmk 编译
+本项目可使用 `latexmk` 编译文档，文档及编译临时文件会保存在 `out` 目录下。
+如果使用TexStudio应设置默认编译器为`Latexmk`， 并开启高级选项，在构建中将`out`添加到附加搜索路径中。
+
+latexmk 配置文件为 `.latexmkrc`。
+
+命令行编译
+```bash
+latexmk final_thesis.tex
+```
+
+
 
 ## beamer 模板
 
