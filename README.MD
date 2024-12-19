@@ -4,12 +4,12 @@
 
 
 ## 论文模板
-基于 book 制作，使用 xelatex 编译
+基于 book 制作，使用 xelatex 编译，本模板在Overleaf上同步更新：[Overleaf 模板](https://www.overleaf.com/latex/templates/gui-zhou-da-xue-yan-jiu-sheng-bi-ye-lun-wen-mo-ban/tstnysppbxvh)。
 
 ### 更新历史
 - ***1.1.1** (2024-08-19) 添加外部字体支持
 - **1.1.0** (2024-08-18) 重构
-    - 规避版权风险，删除了内置字体
+    - 规避版权风险，删除了内置字体 
     - 增加代码注释
     - 参考文献设置移除宏包
     
