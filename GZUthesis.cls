@@ -78,9 +78,13 @@
 \newif\ifdraft
 \newif\ifgrad %判断是否时研究生
 \newif\iffullfont
+\newif\ifchecktnra
+\newif\ifcheckhwxk
 \doctortrue
 \drafttrue
 \gradtrue
+\checktnrafalse
+\checkhwxkfalse
 
 %%% 定义文档选项 %%%
 % 定义学位类型 本硕博
@@ -125,6 +129,8 @@
     \ClassError{GZUthesis}{print error: #1;review,final,draft }
 }
 \DeclareOption{windows}{\fullfonttrue}
+\DeclareOption{tnra}{\checktnratrue}
+\DeclareOption{hwxk}{\checkhwxktrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptionsX<GZUthesis>\relax
 
@@ -194,16 +200,42 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%% 处理字体 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%% 主题字体 默认楷体
+\newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{zhkai}}
+
+%% 字体检查，主要检查 华文楷体
+\newcommand{\GZU@hwxkcheck}{
+
+    %% 主题字体，如果系统存在华文行楷则使用，如果没有则使用楷书
+    \IfFontExistsTF{STXINGKA}{
+        \setCJKfamilyfont{hwxk}{STXINGKA}
+        \renewcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
+    }{
+        \IfFontExistsTF{STXINGKA.TTF}{
+            \setCJKfamilyfont{hwxk}{STXINGKA.TTF}
+            \renewcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
+        }{
+        }
+    }
+
+}
+
+%% 字体检查，主要检查 Times New Roman, Arial
+\newcommand{\GZU@tnracheck}{
+
 %% 如有Times New Roman，将其作为默认字体
-\IfFontExistsTF{Times New Roman}{
-    \setmainfont{Times New Roman}
-}{
+    \IfFontExistsTF{Times New Roman}{
+        \setmainfont{Times New Roman}
+    }{
+    }
+    %% 如有Arial，将其作为无衬线字体
+    \IfFontExistsTF{Arial}{
+        \setsansfont{Arial}
+    }{
+    }
 }
-%% 如有Arial，将其作为无衬线字体
-\IfFontExistsTF{Arial}{
-    \setsansfont{Arial}
-}{
-}
+
+
 
 \newcommand{\GZU@usewindowsfont}{
     \IfFontExistsTF{SimSun}{
@@ -258,21 +290,11 @@
     \fi 
 }
 
-\ifwindows\else\iffullfont
+\ifwindows\GZU@hwxkcheck\GZU@ntracheck\else\iffullfont
 \GZU@usewindowsfont
 \fi\fi
-%% 主题字体，如果系统存在华文行楷则使用，如果没有则使用楷书
-\IfFontExistsTF{STXINGKA}{
-    \setCJKfamilyfont{hwxk}{STXINGKA}
-    \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
-}{
-    \IfFontExistsTF{STXINGKA.TTF}{
-        \setCJKfamilyfont{hwxk}{STXINGKA.TTF}
-        \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
-    }{
-        \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{zhkai}}
-    }
-}
+\ifchecktnra\GZU@tnarcheck\fi
+\ifcheckhwxk\GZU@hwxkcheck\fi
 
 %% 送审题目字体 一号 黑体
 \newcommand{\GZU@font@review@title}{\zihao{1} \CJKfamily+{zhhei}}

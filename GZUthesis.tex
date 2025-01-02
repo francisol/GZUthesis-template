@@ -32,6 +32,11 @@
         \begin{itemize}
             \item 添加外部字体支持
         \end{itemize}
+        \item[1.1.2] (2025-01-02) 调整字体搜索策略，以及其他优化
+        \begin{itemize}
+            \item 增加模板参数，调整 \texttt{Times New Roman},\texttt{ Arial}, \texttt{华文楷体}字体的搜索策略，优化编译
+            \item 其他优化
+        \end{itemize}
     \end{itemize}
 
 
@@ -69,11 +74,12 @@
     参考文献样式未在宏包中限制，但在样例文件中给出国标格式。
 
     \section{已知问题}
-    由于平台字体限制，除windows 平台外，其他平台不能按照模板规范显示，例如 linux系统使用的不是Sim*字体，部分扩展区文字显示乱码。 在没有 Time New Roman 和Arial字体时，模板会将字体分别指定为当前系统的默认字体和无衬线字体。
+    由于平台字体限制，除windows 平台外，其他平台不能按照模板规范显示，例如 linux系统使用的不是Sim*字体，部分扩展区文字显示乱码。 在非Windows系统，模板默认不适用 \texttt{Times New Roman}, \texttt{Arial}, \texttt{华文楷体}等字体。
+    若系统中有\texttt{Times New Roman}, \texttt{Arial} 字体 请使用  包选项 \textbf{tnra} 启用。
 
     中文字体由 \textbf{ctex}提供，模板并未修改。
 
-    盲审版首页 \textbf{XX 届X士研究生学位论文} 字样为华文行楷（STXINGKA），若系统无该字体或文档目录下无STXINGKA.TTF文件，则使用楷体。
+    盲审版首页 \textbf{XX 届X士研究生学位论文} 字样为华文行楷（STXINGKA）。在非Windows 系统下， 若系统有该字体或文档目录有STXINGKA.TTF文件，则使用 包选项 \textbf{hwxk} 启用华文行楷， 否则使用楷体。
 
 
     \textbf{页面布局并未一比一复刻，但是没那么离谱。}
@@ -101,7 +107,7 @@
     \end{optdesc}
     
     
-        \begin{function}[added=2024-08-19]{windows}
+    \begin{function}[added=2024-08-19]{windows}
         \begin{syntax}
             windows
         \end{syntax}
@@ -113,7 +119,28 @@
             \item[楷体] 搜索系统字体 \texttt{KaiTi} 或者当前目录下 \texttt{simkai.ttf}
          \end{description}
     \end{function}
-    
+
+    \begin{function}[added=2025-01-02]{hwxk}
+        \begin{syntax}
+            hwxk
+        \end{syntax}
+        若使用 hwxk 参数，则尝试在系统或者文档当前目录下搜索 \texttt{华文楷体} 字体并使用，该参数仅在非windows 系统下有效。
+        \begin{description}
+            \item[华文行楷] 搜索系统字体 \texttt{STXINGKA} 或者当前目录下 \texttt{STXINGKA.TTF}
+
+         \end{description}
+    \end{function}
+
+    \begin{function}[added=2025-01-02]{tnra}
+        \begin{syntax}
+            tnra
+        \end{syntax}
+        若使用 tnra 参数，则尝试在系统搜索 \texttt{Arial} 和 \texttt{Times New Roman} 字体并使用，该参数仅在非windows 系统下有效。
+        \begin{description}
+            \item[Arial] 搜索系统字体 \texttt{Arial}
+            \item[Times New Roman] 搜索系统字体 \texttt{Times New Roman}
+         \end{description}
+    \end{function}
 
     \subsection{宏包命令}
 
@@ -329,7 +356,7 @@
     \begin{environment}{abstract}
         \begin{syntax}
             \cs{begin}\{abstract\}[abstract] \\
-            This research investigates the latest applications and optimization techniques
+                This research investigates the latest applications and optimization techniques
             of deep neural networks in the field of image recognition. \\
             \cs{end}\{abstract\}
         \end{syntax}
@@ -343,7 +370,7 @@
     \begin{environment}{appendices}
         \begin{syntax}
             \cs{begin}\{appendices\} \\
-            \cs{chapter}\{参与会议\} \\
+            \quad  \cs{chapter}\{参与会议\} \\
             \cs{end}\{appendices\}
         \end{syntax}
         这个环境用于创建附录章节，章节不编码，包裹在其中的章节按大写英文字母编码。
@@ -351,9 +378,9 @@
         \begin{texnote}
             使用示例：
             \begin{verbatim}
-                \begin{appendices}
-                    \chapter{参与会议}
-                \end{appendices}
+            \begin{appendices}
+                \chapter{参与会议}
+            \end{appendices}
             \end{verbatim}
 
             目录会新增两个一级目录分别为 \textbf{附录} 、\textbf{附录 A 参与会议}。
