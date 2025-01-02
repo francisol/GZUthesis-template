@@ -7,12 +7,13 @@
 基于 book 制作，使用 xelatex 编译，本模板在Overleaf上同步更新：[Overleaf 模板](https://www.overleaf.com/latex/templates/gui-zhou-da-xue-yan-jiu-sheng-bi-ye-lun-wen-mo-ban/tstnysppbxvh)。
 
 ### 更新历史
-- ***1.1.2** (2025-01-12) 调整字体搜索策略，以及其他优化
-    – 增加模板参数 `tnra` 启用 Times New Roman, Arial 字体 系统需要有对应字体
-    - 增加模板参数 `hwxk` 启用 华文楷体字体，系统或当前目录需要有对应字体
-    – 其他优化
 
-- ***1.1.1** (2024-08-19) 添加外部字体支持
+- **1.1.2** (2025-01-12) 调整字体搜索策略，以及其他优化
+    - 增加模板参数 `tnra` 启用 Times New Roman, Arial 字体 系统需要有对应字体
+    - 增加模板参数 `hwxk` 启用 华文楷体字体，系统或当前目录需要有对应字体
+    - 其他优化
+
+- **1.1.1** (2024-08-19) 添加外部字体支持
 
 
 - **1.1.0** (2024-08-18) 重构
