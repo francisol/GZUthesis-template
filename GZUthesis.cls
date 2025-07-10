@@ -1,11 +1,21 @@
+% ----------------------------------------------------------------
+% GZUthesis.cls
+% 贵州大学学位论文模板
+% 
+% Copyright (c) 2023-2025  https://github.com/francisol
+% 
+% 传播请注明来源，尊重作者劳动
+% ----------------------------------------------------------------
+
 % 声明文档类
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesPackage{GZUthesis}[2024/08/18 v1.1.0 Guizhou University Thesis Template]
+\ProvidesPackage{GZUthesis}[2025/07/10 v1.1.3 Guizhou University Thesis Template]
 \LoadClass[cs4size,a4paper,fancyhdr,fntef,oneside]{book}
 \RequirePackage{xkeyval}
 \RequirePackage{ifthen}
 \RequirePackage{ifplatform}
-
+\RequirePackage[intoc]{nomencl}
+\RequirePackage{pgfkeys}
 
 \def\GZU@university{贵州大学}
 %
@@ -138,11 +148,6 @@
 \RequirePackage{fontspec}
 
 \RequirePackage[UTF8,zihao=-4,heading=true]{ctex}
-
-
-
-
-
 
 
 
@@ -298,7 +303,7 @@
 
 %% 送审题目字体 一号 黑体
 \newcommand{\GZU@font@review@title}{\zihao{1} \CJKfamily+{zhhei}}
-%% 地址(贵州·z贵阳)字体 黑体四号
+%% 地址(贵州·贵阳)字体 黑体四号
 \newcommand{\GZU@font@review@address}{ \CJKfamily+{zhhei} \zihao{4} }
 
 %% 日期字体 黑体四号
@@ -320,8 +325,8 @@
 \newcommand{\GZU@font@final@date}{\heiti \zihao{4}}
 %% 终版学校字体 黑体三号
 \newcommand{\GZU@font@final@university}{\heiti \zihao{3}}
-%% 终版主题字体
-\newcommand{\GZU@font@final@topic}{ \CJKfamily+{zhhei}\zihao{3} }
+%% 终版主题字体 小三号黑体
+\newcommand{\GZU@font@final@topic}{ \CJKfamily+{zhhei}\zihao{-3} }
 %% 终版表格字体
 \newcommand{\GZU@font@final@table}{ \CJKfamily+{zhhei}\zihao{-3} }
 
@@ -358,6 +363,8 @@
     }
     \addcontentsline{toc}{chapter}{\uppercase{#1}}
     \par
+
+    \vspace{14pt}
     \GZU@font@abscontent
 }{}
 %% 定义关键词环境
@@ -474,11 +481,11 @@
         \vspace{10em}
         \setstretch{0.1}
         \vskip 0.1pt
-        \setstretch{0.85}
-        \noindent{\GZU@font@final@classfyno \GZU@table@key{\GZU@table@classfyno} \GZU@tablesep \dlmu[2cm]{\GZU@classifyno}}
+        \setstretch{1.2}
+        \noindent{\GZU@font@final@classfyno \GZU@table@key{\GZU@table@classfyno} \GZU@tablesep \dlmu[2.5cm]{\GZU@classifyno}}
         \hfill
-        {\GZU@font@final@seclvl \GZU@table@seclvl\GZU@tablesep\dlmu[2cm]{\GZU@seclvl}} \newline
-        \noindent{\GZU@font@final@paperno \GZU@table@key{\GZU@table@paperno} \GZU@tablesep \dlmu[2cm]{\GZU@paperno}} \newline
+        {\GZU@font@final@seclvl \GZU@table@seclvl\GZU@tablesep\dlmu[2.5cm]{\GZU@seclvl}} \newline
+        \noindent{\GZU@font@final@paperno \GZU@table@key{\GZU@table@paperno} \GZU@tablesep \dlmu[2.5cm]{\GZU@paperno}} \newline
         
     }
     \vskip 43.2pt
@@ -487,7 +494,7 @@
         
     }
     
-    \vskip -5pt
+    % \vskip -5pt
     
     {
         \noindent\centering\GZU@font@final@topic \GZU@final@topic
@@ -507,7 +514,7 @@
     
     \noindent
     \begin{center}
-        \setstretch{1.055}
+        \setstretch{1.4}
         \GZU@font@final@table
         \GZU@table@key{\GZU@table@major} \GZU@tablesep \dlmu{\GZU@major}
         
@@ -626,7 +633,8 @@
 
 %% 内部实现 正文样式
 \newcommand\GZU@mainmatter{
-    
+    \clearpage
+    \setcounter{page}{1}
     \pagestyle{GZU@main}
     \pagenumbering{arabic}
     \onehalfspacing
@@ -725,7 +733,8 @@
 
 % 目录样式
 \renewcommand*\contentsname{\begin{center}目\quad 录\end{center}}
-
+\renewcommand\listfigurename{图版}
+\renewcommand\listtablename{表版}
 %% 目录深度
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
