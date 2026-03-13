@@ -9,7 +9,7 @@
 
 % 声明文档类
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesPackage{GZUthesis}[2025/07/10 v1.1.3 Guizhou University Thesis Template]
+\ProvidesPackage{GZUthesis}[2024/08/18 v1.1.3 Guizhou University Thesis Template]
 \LoadClass[cs4size,a4paper,fancyhdr,fntef,oneside]{book}
 \RequirePackage{xkeyval}
 \RequirePackage{ifthen}
@@ -51,15 +51,15 @@
 \def\GZU@date@year{ \the\year}
 \def\GZU@date@month{ \the\month}
 \def\GZU@titlewidth{14cm} %题目宽度
-\def\GZU@titleheight{4.5em} %题目最多三行
+\def\GZU@titleheight{3em} %题目最多两行
 
 \def\GZU@fontname@song{}
 \def\GZU@fontname@kai{}
 \def\GZU@fontname@hei{}
 \def\GZU@fontname@fsong{}
 \def\parsedate#1年#2月#3\endparse{%
-    \def\GZU@date@year{#1}
-    \def\GZU@date@month{#2}
+	\def\GZU@date@year{#1}
+	\def\GZU@date@month{#2}
 }
 
 %% 常量
@@ -90,57 +90,60 @@
 \newif\iffullfont
 \newif\ifchecktnra
 \newif\ifcheckhwxk
+\newif\ifenablewatermark %是否使用水印
 \doctortrue
 \drafttrue
 \gradtrue
 \checktnrafalse
 \checkhwxkfalse
+\enablewatermarkfalse
 
 %%% 定义文档选项 %%%
 % 定义学位类型 本硕博
 \define@choicekey*+{GZUthesis}{degree}[\val\position]{doctor,master,bachelor}[doctor]{%
-    %    \def\GZU@option@degree{#1}
-    \ifcase\position\relax
-    \doctortrue
-    \masterfalse
-    \bachelorfalse
-    \gradtrue
-    \or
-    \doctorfalse
-    \mastertrue
-    \bachelorfalse
-    \gradtrue
-    \or
-    \doctorfalse
-    \masterfalse
-    \bachelortrue
-    \gradfalse
-    \fi
+	%    \def\GZU@option@degree{#1}
+	\ifcase\position\relax
+		\doctortrue
+		\masterfalse
+		\bachelorfalse
+		\gradtrue
+	\or
+		\doctorfalse
+		\mastertrue
+		\bachelorfalse
+		\gradtrue
+	\or
+		\doctorfalse
+		\masterfalse
+		\bachelortrue
+		\gradfalse
+	\fi
 }{%
-    \ClassError{GZUthesis}{degree error: #1;select in doctor,master,bachelor }
+	\ClassError{GZUthesis}{degree error: #1;select in doctor,master,bachelor }
 }
 % 定义打印类型 盲审 终稿 草稿
 \define@choicekey*+{GZUthesis}{print}[\val\position]{draft,review,final}[draft]{%
-    \global\def\GZU@option@print{#1}
-    \ifcase\position\relax
-    \reviewfalse
-    \finalfalse
-    \drafttrue
-    \or
-    \reviewtrue
-    \finalfalse
-    \draftfalse
-    \or
-    \reviewfalse
-    \finaltrue
-    \draftfalse
-    \fi
+	\global\def\GZU@option@print{#1}
+	\ifcase\position\relax
+		\reviewfalse
+		\finalfalse
+		\drafttrue
+	\or
+		\reviewtrue
+		\finalfalse
+		\draftfalse
+	\or
+		\reviewfalse
+		\finaltrue
+		\draftfalse
+	\fi
 }{%
-    \ClassError{GZUthesis}{print error: #1;review,final,draft }
+	\ClassError{GZUthesis}{print error: #1;review,final,draft }
 }
 \DeclareOption{windows}{\fullfonttrue}
 \DeclareOption{tnra}{\checktnratrue}
 \DeclareOption{hwxk}{\checkhwxktrue}
+\DeclareOption{watermark}{\enablewatermarktrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptionsX<GZUthesis>\relax
 
@@ -209,97 +212,179 @@
 \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{zhkai}}
 
 %% 字体检查，主要检查 华文楷体
-\newcommand{\GZU@hwxkcheck}{
 
-    %% 主题字体，如果系统存在华文行楷则使用，如果没有则使用楷书
-    \IfFontExistsTF{STXINGKA}{
-        \setCJKfamilyfont{hwxk}{STXINGKA}
-        \renewcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
-    }{
-        \IfFontExistsTF{STXINGKA.TTF}{
-            \setCJKfamilyfont{hwxk}{STXINGKA.TTF}
-            \renewcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
-        }{
-        }
-    }
+\newcommand{\GZU@hwxkcheck}{
+\ifwindows
+    \def\xingkainame{STXINGKA}
+\else
+    \def\xingkainame{STXingkai}
+\fi
+	%% 主题字体，如果系统存在华文行楷则使用，如果没有则使用楷书
+	\IfFontExistsTF{\xingkainame}{
+		\setCJKfamilyfont{hwxk}{\xingkainame}
+		\renewcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
+	}{
+		\IfFontExistsTF{STXINGKA.TTF}{
+			\setCJKfamilyfont{hwxk}{STXINGKA.TTF}
+			\renewcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}
+		}{
+		}
+	}
 
 }
 
 %% 字体检查，主要检查 Times New Roman, Arial
 \newcommand{\GZU@tnracheck}{
 
-%% 如有Times New Roman，将其作为默认字体
-    \IfFontExistsTF{Times New Roman}{
-        \setmainfont{Times New Roman}
-    }{
-    }
-    %% 如有Arial，将其作为无衬线字体
-    \IfFontExistsTF{Arial}{
-        \setsansfont{Arial}
-    }{
-    }
+	%% 如有Times New Roman，将其作为默认字体
+	\IfFontExistsTF{Times New Roman}{
+		\setmainfont{Times New Roman}
+	}{
+	}
+	%% 如有Arial，将其作为无衬线字体
+	\IfFontExistsTF{Arial}{
+		\setsansfont{Arial}
+	}{
+	}
 }
 
 
 
 \newcommand{\GZU@usewindowsfont}{
-    \IfFontExistsTF{SimSun}{
-        \global\def\GZU@fontname@song{SimSun}
-    }{
-        \IfFontExistsTF{simsun.ttc}{
-            \global\def\GZU@fontname@song{simsun.ttc}
-        }{
-            \fullfontfalse
-        }
-    }
-    \IfFontExistsTF{FangSong}{
-        \global\def\GZU@fontname@fsong{FangSong}
-    }{
-        
-        \IfFontExistsTF{simfang.ttf}{
-            \global\def\GZU@fontname@fsong{simfang.ttf}
-        }{
-            \fullfontfalse
-        }
-    }
-    
-    \IfFontExistsTF{SimHei}{
-        \global\def\GZU@fontname@hei{SimHei}
-    }{
-        
-        \IfFontExistsTF{simhei.ttf}{
-            \global\def\GZU@fontname@hei{simhei.ttf}
-        }{
-            
-            \fullfontfalse
-        }
-    }
-    
-    \IfFontExistsTF{KaiTi}{
-        \global\def\GZU@fontname@kai{KaiTi}
-    }{
-        \IfFontExistsTF{simkai.ttf}{
-            \global\def\GZU@fontname@kai{simkai.ttf}
-        }{
-            
-            \fullfontfalse
-        }
-    }
-    \iffullfont
-    \setCJKmainfont[BoldFont=\GZU@fontname@hei,ItalicFont=\GZU@fontname@kai]{\GZU@fontname@song}
-    \setCJKmonofont{\GZU@fontname@fsong}
-    \setCJKfamilyfont{zhsong}{\GZU@fontname@song}
-    \setCJKfamilyfont{zhhei}{\GZU@fontname@hei}
-    \setCJKfamilyfont{zhfs}{\GZU@fontname@fsong}
-    \setCJKfamilyfont {zhkai} {\GZU@fontname@kai}
-    \fi 
+	\IfFontExistsTF{SimSun}{
+		\global\def\GZU@fontname@song{SimSun}
+	}{
+		\IfFontExistsTF{simsun.ttc}{
+			\global\def\GZU@fontname@song{simsun.ttc}
+		}{
+			\fullfontfalse
+		}
+	}
+	\IfFontExistsTF{FangSong}{
+		\global\def\GZU@fontname@fsong{FangSong}
+	}{
+
+		\IfFontExistsTF{simfang.ttf}{
+			\global\def\GZU@fontname@fsong{simfang.ttf}
+		}{
+			\fullfontfalse
+		}
+	}
+
+	\IfFontExistsTF{SimHei}{
+		\global\def\GZU@fontname@hei{SimHei}
+	}{
+
+		\IfFontExistsTF{simhei.ttf}{
+			\global\def\GZU@fontname@hei{simhei.ttf}
+		}{
+
+			\fullfontfalse
+		}
+	}
+
+	\IfFontExistsTF{KaiTi}{
+		\global\def\GZU@fontname@kai{KaiTi}
+	}{
+		\IfFontExistsTF{simkai.ttf}{
+			\global\def\GZU@fontname@kai{simkai.ttf}
+		}{
+
+			\fullfontfalse
+		}
+	}
+	\iffullfont
+		\setCJKmainfont[BoldFont=\GZU@fontname@hei,ItalicFont=\GZU@fontname@kai]{\GZU@fontname@song}
+		\setCJKmonofont{\GZU@fontname@fsong}
+		\setCJKfamilyfont{zhsong}{\GZU@fontname@song}
+		\setCJKfamilyfont{zhhei}{\GZU@fontname@hei}
+		\setCJKfamilyfont{zhfs}{\GZU@fontname@fsong}
+		\setCJKfamilyfont {zhkai} {\GZU@fontname@kai}
+	\fi
 }
 
 \ifwindows\GZU@hwxkcheck\GZU@ntracheck\else\iffullfont
-\GZU@usewindowsfont
-\fi\fi
-\ifchecktnra\GZU@tnarcheck\fi
+		\GZU@usewindowsfont
+	\fi\fi
+\ifchecktnra\GZU@tnracheck\fi
 \ifcheckhwxk\GZU@hwxkcheck\fi
+
+\ifenablewatermark
+  \RequirePackage[final]{draftwatermark}
+  \RequirePackage{xcolor}
+  \RequirePackage{graphicx}
+
+  % ----------------------------
+  %  水印控制参数
+  % ----------------------------
+  \newcommand{\GZU@blankpagespace}{1.5em}
+  \newcommand{\GZU@blankpagetext}{%
+  此\hspace{\GZU@blankpagespace}%
+  页\hspace{\GZU@blankpagespace}%
+  无\hspace{\GZU@blankpagespace}%
+  正\hspace{\GZU@blankpagespace}%
+  文%
+}
+  \newcommand{\GZU@blankpagefontsize}{36} % 字号（pt）
+  \newcommand{\GZU@blankpageangle}{45}
+  \definecolor{GZU@blankpagewmcolor}{gray}{0.85}
+
+  % ----------------------------
+  % 单页空白页水印：只供 shipout/background 调用
+  % shipout/background 的坐标原点在页面左上角，适合放背景内容
+  % ----------------------------
+  \newcommand{\GZU@blankpagewatermark}{%
+    \put(0,0){%
+      \parbox[t][\paperheight]{\paperwidth}{%
+        \centering
+        \vspace*{0.3\paperheight}%
+        \rotatebox{\GZU@blankpageangle}{%
+          \textcolor{GZU@blankpagewmcolor}{%
+            \fontsize{\GZU@blankpagefontsize}{\GZU@blankpagefontsize}\selectfont
+            \GZU@blankpagetext
+          }%
+        }%
+        \vss
+      }%
+    }%
+  }
+
+  % ----------------------------
+  % 重定义 cleardoublepage：
+  % 在双面打印时的新增页添加“此页无证文“
+  % ----------------------------
+  \renewcommand{\cleardoublepage}{%
+    \clearpage
+    \if@twoside
+      \ifodd\c@page
+        % 无需补空白页
+      \else
+        % 需要补空白页：仅这一页加背景水印
+        \thispagestyle{empty}%
+        \AddToHookNext{shipout/background}{\GZU@blankpagewatermark}%
+        \hbox{}%
+        \newpage
+        \if@twocolumn
+          \thispagestyle{empty}%
+          \AddToHookNext{shipout/background}{\GZU@blankpagewatermark}%
+          \hbox{}%
+          \newpage
+        \fi
+      \fi
+    \fi
+  }
+
+  % 可选：不是双面时给出提醒
+  \AtBeginDocument{%
+    \if@twoside\else
+      \ClassWarning{GZUthesis}{%
+        Watermark option enabled, but blank-page watermark\MessageBreak
+        only takes effect in twoside mode%
+      }%
+    \fi
+  }
+\fi
+
 
 %% 送审题目字体 一号 黑体
 \newcommand{\GZU@font@review@title}{\zihao{1} \CJKfamily+{zhhei}}
@@ -351,40 +436,41 @@
 % 定义文档结构
 %% 封面表格key长度
 \newcommand{\GZU@table@key}[1]{
-    \makebox[4em][s]{#1}
+	\makebox[4em][s]{#1}
 }
 
 %% 定义摘要环境
 \newenvironment{abstract}[1][摘要]{%
-    \chapter*{\ }
-    {
-        \centering {\GZU@font@abstitle \uppercase{#1}}
-        
-    }
-    \addcontentsline{toc}{chapter}{\uppercase{#1}}
-    \par
+	\chapter*{\ }
+	 {
+	  \centering {\GZU@font@abstitle \uppercase{#1}}
 
-    \vspace{14pt}
-    \GZU@font@abscontent
+	 }
+	\addcontentsline{toc}{chapter}{\uppercase{#1}}
+	\par
+
+	\vspace{14pt}
+  \setstretch{1.5}
+	\GZU@font@abscontent
 }{}
 %% 定义关键词环境
 \newcommand{\keywords}[2][关键词：]{
-    \par \noindent {\GZU@font@keywstitle #1} %
-    {\GZU@font@keywscontent #2}
+	\par \noindent {\GZU@font@keywstitle #1} %
+	{\GZU@font@keywscontent #2}
 }
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 制作封面 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 重定义封面制作
 \renewcommand{\maketitle}{
-    \GZU@mktitle
+	\GZU@mktitle
 }
 
 %内部文档结构命令
 
 %% 封面边距
 \newcommand{\GZU@geometry@cover}{
-    \newgeometry{top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
+	\newgeometry{top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
 }
 
 
@@ -398,211 +484,237 @@
 
 %%% 制作封面 %%%%
 \newcommand\GZU@mktitle{
-    %%  根据class 参数更新内部变量
-    \ifdoctor
-    \global\def\GZU@final@topic{\GZU@gradyear 届博士研究生学位论文}
-    \global\def\GZU@review@topic{\GZU@gradyear 届博士学位论文}
-    \global\edef\GZU@defense@topic{博\GZU@defense@topic}
-    \else\ifmaster
-    \global\def\GZU@final@topic{\GZU@gradyear 届硕士研究生学位论文}
-    \global\def\GZU@review@topic{\GZU@gradyear 届硕士学位论文}
-    \global\edef\GZU@defense@topic{硕\GZU@defense@topic}
-    \else
-    \ClassError{GZUthesis}{type error: no impl for bachelor }
-    \fi\fi
-    % \GZU@topic
-    \GZU@mkpage@gradtitle
+	%%  根据class 参数更新内部变量
+	\ifdoctor
+		\global\def\GZU@final@topic{\GZU@gradyear 届博士研究生学位论文}
+		\global\def\GZU@review@topic{\GZU@gradyear 届博士学位论文}
+		\global\edef\GZU@defense@topic{博\GZU@defense@topic}
+	\else\ifmaster
+			\global\def\GZU@final@topic{\GZU@gradyear 届硕士研究生学位论文}
+			\global\def\GZU@review@topic{\GZU@gradyear 届硕士学位论文}
+			\global\edef\GZU@defense@topic{硕\GZU@defense@topic}
+		\else
+			\ClassError{GZUthesis}{type error: no impl for bachelor }
+		\fi\fi
+	% \GZU@topic
+	\GZU@mkpage@gradtitle
 }
 % 制作研究生封面
 \newcommand\GZU@mkpage@gradtitle{
-    \GZU@geometry@cover
-    \ifreview    \GZU@mkpage@gradreview\fi
-    
-    \iffinal\GZU@mkpage@gradfinal\GZU@mkpage@defense\fi
-    
-    \ifdraft\GZU@mkpage@graddraft\fi
-    
-    \restoregeometry
+	\GZU@geometry@cover
+	\ifreview    \GZU@mkpage@gradreview\fi
+
+	\iffinal\GZU@mkpage@gradfinal\GZU@mkpage@defense\fi
+
+	\ifdraft\GZU@mkpage@graddraft\fi
+
+	\restoregeometry
 }
 
 %%%%% 制作研究生封面 %%%%%%%%
 % 制作盲审封面
 \newcommand\GZU@mkpage@gradreview{
-    \newgeometry{top=2.18cm,left=2.4cm,right=2.4cm}
-    
-    \setlength{\fboxsep}{20.5pt}\framebox[1\width][c]{\GZU@table@paperno \GZU@tablesep \dlmu[4.3cm]{}\hskip5pt}
-    \vskip 50pt
-    %
-    \begin{center}
-        \includegraphics[width=3.05cm,height=3.0cm]{logo/gzu.jpg}\\
-        \includegraphics[width=4.18cm,height=1.64cm]{logo/gzdx.png}
-    \end{center}
-    \setstretch{1.0}
-    \begin{center}
-        \ziju{0.060}
-        \GZU@font@review@topic{\GZU@review@topic}
-    \end{center}
-    \vskip 38pt
-    \begin{center}
-        \GZU@font@review@title
-        \begin{minipage}[c][\GZU@titleheight][t]{\GZU@titlewidth}
-            \begin{center}
-                \GZU@title
-            \end{center}
-        \end{minipage}
-    \end{center}
-    
-    
-    \begin{center}
-        \setstretch{1.6}
-        \GZU@font@review@table
-        \GZU@table@major     \GZU@tablesep     \dlwave{\GZU@major}\\
-        \GZU@table@research  \GZU@tablesep     \dlwave{\GZU@research}\\
-    \end{center}
-    
-    \vskip 70pt
-    
-    \begin{center}
-        
-        \setstretch{1.6}
-        \GZU@font@review@address{\GZU@address}\\
-        \GZU@font@review@date \GZU@date@year 年 \GZU@date@month 月
-        
-        
-    \end{center}
-    \thispagestyle{empty}
-    \clearpage
-    \restoregeometry
+	\newgeometry{top=2.18cm,left=2.4cm,right=2.4cm}
+
+	% \setlength{\fboxsep}{20.5pt}\framebox[1\width][c]{\GZU@table@paperno \GZU@tablesep \dlmu[4.3cm]{}\hskip5pt}
+	~\vskip 72pt
+	%
+	\begin{center}
+		\includegraphics[width=3.05cm]{logo/logo.eps}\\
+		\includegraphics[width=4.18cm,height=1.64cm]{logo/gzdx.png}
+	\end{center}
+	\setstretch{1.0}
+	\begin{center}
+		\ziju{0.060}
+		\GZU@font@review@topic{\GZU@review@topic}
+	\end{center}
+	\vskip 38pt
+	\begin{center}
+		\GZU@font@review@title
+		\begin{minipage}[c][\GZU@titleheight][t]{\GZU@titlewidth}
+			\begin{center}
+				\GZU@title
+			\end{center}
+		\end{minipage}
+	\end{center}
+%%%% 计算文本内容宽度，方便画波浪线
+  \newsavebox{\GZU@majorbox}
+	\newsavebox{\GZU@researchbox}
+	\newlength{\GZU@maxcontentlen}
+	\newlength{\GZU@mincontentlen}
+	% 设置最小长度为4cm（可以根据需要调整）
+	\setlength{\GZU@mincontentlen}{4cm}
+	
+	% 测量专业和研究方向的宽度（考虑字体样式）
+	\sbox{\GZU@majorbox}{\GZU@font@review@table \GZU@major}
+	\sbox{\GZU@researchbox}{\GZU@font@review@table \GZU@research}
+	
+	% 取两个内容宽度的最大值
+	\ifdim\wd\GZU@majorbox>\wd\GZU@researchbox
+		\setlength{\GZU@maxcontentlen}{\wd\GZU@majorbox}
+	\else
+		\setlength{\GZU@maxcontentlen}{\wd\GZU@researchbox}
+	\fi
+	
+	% 确保不少于4cm
+	\ifdim\GZU@maxcontentlen<\GZU@mincontentlen
+	\setlength{\GZU@maxcontentlen}{\GZU@mincontentlen}
+	\fi
+	
+	% 添加一点边距（比如增加0.2cm的余量）
+	\addtolength{\GZU@maxcontentlen}{0.2cm}
+%%%% 计算完成
+
+	\begin{center}
+		\setstretch{1.6}
+		\GZU@font@review@table
+    \GZU@table@major     \GZU@tablesep     \dlwave[\GZU@maxcontentlen]{\GZU@major}\\
+    \GZU@table@research  \GZU@tablesep     \dlwave[\GZU@maxcontentlen]{\GZU@research}\\
+	\end{center}
+
+	\vskip 90pt
+
+	\begin{center}
+
+		\setstretch{1.6}
+		\GZU@font@review@address{\GZU@address}\\
+		\GZU@font@review@date \GZU@date@year 年 \GZU@date@month 月
+
+
+	\end{center}
+	\thispagestyle{empty}
+	\clearpage
+	\restoregeometry
 }
 %% 制作最终版封面
 \newcommand\GZU@mkpage@gradfinal{
-    
-    {
-        \vspace{10em}
-        \setstretch{0.1}
-        \vskip 0.1pt
-        \setstretch{1.2}
-        \noindent{\GZU@font@final@classfyno \GZU@table@key{\GZU@table@classfyno} \GZU@tablesep \dlmu[2.5cm]{\GZU@classifyno}}
-        \hfill
-        {\GZU@font@final@seclvl \GZU@table@seclvl\GZU@tablesep\dlmu[2.5cm]{\GZU@seclvl}} \newline
-        \noindent{\GZU@font@final@paperno \GZU@table@key{\GZU@table@paperno} \GZU@tablesep \dlmu[2.5cm]{\GZU@paperno}} \newline
-        
-    }
-    \vskip 43.2pt
-    {
-        \noindent\centering\GZU@font@final@university \makebox[8em][s]{\GZU@university}
-        
-    }
-    
-    % \vskip -5pt
-    
-    {
-        \noindent\centering\GZU@font@final@topic \GZU@final@topic
-        
-    }
-    \vskip 120pt
-    \begin{center}
-        \GZU@font@final@title
-        \begin{minipage}[c][\GZU@titleheight][t]{\GZU@titlewidth}
-            \begin{center}
-                \GZU@title
-            \end{center}
-        \end{minipage}
-    \end{center}
-    
-    \vskip 55pt
-    
-    \noindent
-    \begin{center}
-        \setstretch{1.4}
-        \GZU@font@final@table
-        \GZU@table@key{\GZU@table@major} \GZU@tablesep \dlmu{\GZU@major}
-        
-        \GZU@table@key{\GZU@table@research} \GZU@tablesep \dlmu{\GZU@research}
-        
-        
-        \GZU@table@key{\GZU@table@supervisor} \GZU@tablesep \dlmu{\GZU@supervisor}
-        
-        \GZU@table@key{\GZU@table@author} \GZU@tablesep \dlmu{\GZU@author}
-    \end{center}
-    \vskip 80pt
-    \begin{center}
-        \setstretch{1.6}
-        \GZU@font@final@address \GZU@address
-        \vskip -5pt
-        \GZU@font@final@date \GZU@date@year 年 \GZU@date@month 月
-    \end{center}
-    \thispagestyle{empty}
-    \clearpage
-    \restoregeometry
+
+	{
+			\vspace{10em}
+			\setstretch{0.1}
+			\vskip 0.1pt
+			\setstretch{1.2}
+			\noindent{\GZU@font@final@classfyno \GZU@table@key{\GZU@table@classfyno} \GZU@tablesep \dlmu[2.5cm]{\GZU@classifyno}}
+			\hfill
+			{\GZU@font@final@seclvl \GZU@table@seclvl\GZU@tablesep\dlmu[2.5cm]{\GZU@seclvl}} \newline
+			\noindent{\GZU@font@final@paperno \GZU@table@key{\GZU@table@paperno} \GZU@tablesep \dlmu[2.5cm]{\GZU@paperno}} \newline
+
+		}
+	\vskip 43.2pt
+		{
+			\noindent\centering\GZU@font@final@university \makebox[8em][s]{\GZU@university}
+
+		}
+
+		% \vskip -5pt
+
+		{
+			\noindent\centering\GZU@font@final@topic \GZU@final@topic
+
+		}
+	\vskip 120pt
+	\begin{center}
+		\GZU@font@final@title
+		\begin{minipage}[c][\GZU@titleheight][t]{\GZU@titlewidth}
+			\begin{center}
+				\GZU@title
+			\end{center}
+		\end{minipage}
+	\end{center}
+
+	\vskip 55pt
+
+	\noindent
+	\begin{center}
+		\setstretch{1.4}
+		\GZU@font@final@table
+		\GZU@table@key{\GZU@table@major} \GZU@tablesep \dlmu{\GZU@major}
+
+		\GZU@table@key{\GZU@table@research} \GZU@tablesep \dlmu{\GZU@research}
+
+
+		\GZU@table@key{\GZU@table@supervisor} \GZU@tablesep \dlmu{\GZU@supervisor}
+
+		\GZU@table@key{\GZU@table@author} \GZU@tablesep \dlmu{\GZU@author}
+	\end{center}
+	\vskip 80pt
+	\begin{center}
+		\setstretch{1.6}
+		\GZU@font@final@address \GZU@address
+		\vskip -5pt
+		\GZU@font@final@date \GZU@date@year 年 \GZU@date@month 月
+	\end{center}
+	\thispagestyle{empty}
+	\clearpage
+	\restoregeometry
 }
 
 %% 制作答辩信息页面
 \newcommand\GZU@mkpage@defense{
-    \thispagestyle{empty}
-    ~\vskip 18pt
-    {
-        \noindent\centering \GZU@font@defense@topic   \GZU@defense@topic
-        
-    }
-    
-    \vskip 55pt
-    \noindent
-    \begin{center}
-        \begin{minipage}[c][\GZU@titleheight][t]{\GZU@titlewidth}
-            \begin{center}
-                \noindent\GZU@font@defense@title  \GZU@title
-            \end{center}
-        \end{minipage}
-    \end{center}
-    \vskip 70pt
-    
-    
-    
-    \hskip 65pt
-    \begin{minipage}{.6\linewidth}
-        \setlength{\baselineskip}{100pt}
-        \renewcommand{\do}[1]{##1 \newline}%
-        \begin{spacing}{1.65}
-            \GZU@font@defense@main
-            \GZU@defense@respondent\GZU@tablesep \GZU@author
-            
-            \GZU@defense@committee\GZU@tablesep
-            
-            \GZU@chairman \GZU@tablesep
-            
-            \dolistloop\GZU@experts
-            \GZU@defense@secretary\GZU@tablesep \GZU@defsec
-            
-            \GZU@defense@date\GZU@tablesep     \GZU@defdate
-            
-            \GZU@defense@address\GZU@tablesep   \GZU@defaddr
-        \end{spacing}
-    \end{minipage}
+	\thispagestyle{empty}
+	~\vskip 18pt
+		{
+			\noindent\centering \GZU@font@defense@topic   \GZU@defense@topic
+
+		}
+
+	\vskip 55pt
+	\noindent
+	\begin{center}
+		\begin{minipage}[c][\GZU@titleheight][t]{\GZU@titlewidth}
+			\begin{center}
+				\noindent\GZU@font@defense@title  \GZU@title
+			\end{center}
+		\end{minipage}
+	\end{center}
+	\vskip 70pt
+
+
+
+	\hskip 65pt
+	\begin{minipage}{.6\linewidth}
+		\setlength{\baselineskip}{100pt}
+		\renewcommand{\do}[1]{##1 \newline}%
+		\begin{spacing}{1.65}
+			\GZU@font@defense@main
+			\GZU@defense@respondent\GZU@tablesep \GZU@author
+
+			\GZU@defense@committee\GZU@tablesep
+
+			\GZU@chairman \GZU@tablesep
+
+			\dolistloop\GZU@experts
+			\GZU@defense@secretary\GZU@tablesep \GZU@defsec
+
+			\GZU@defense@date\GZU@tablesep     \GZU@defdate
+
+			\GZU@defense@address\GZU@tablesep   \GZU@defaddr
+		\end{spacing}
+	\end{minipage}
 }
 
 %% 制作草稿封面
 \newcommand{\GZU@mkpage@graddraft}{
-    \begin{titlepage}
-        \vspace*{\fill}
-        \begin{center}
-            {\Huge \GZU@title}\\[0.5cm]
-            {\Large \GZU@author}\\[0.4cm]
-            \GZU@date
-        \end{center}
-        \vspace*{\fill}
-    \end{titlepage}
+	\begin{titlepage}
+		\vspace*{\fill}
+		\begin{center}
+			{\Huge \GZU@title}\\[0.5cm]
+			{\Large \GZU@author}\\[0.4cm]
+			\GZU@date
+		\end{center}
+		\vspace*{\fill}
+	\end{titlepage}
 }
 
 %% 创建新页
 \newcommand{\fillblankpage}{
-    \ifthenelse{\boolean{@twoside}}{%
-        \clearpage
-        {\thispagestyle{empty} \cleardoublepage}
-    }{%
-        \clearpage
-        {\thispagestyle{empty} \clearpage}
-    }%
+	\ifthenelse{\boolean{@twoside}}{%
+		\clearpage
+		{\thispagestyle{empty} \cleardoublepage}
+	}{%
+		\clearpage
+		{\thispagestyle{empty} \clearpage}
+	}%
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 制作封面结束 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -611,62 +723,62 @@
 
 % %% 定义正文前的 pagestyle
 \fancypagestyle{GZU@front}{
-    \fancyhf{}
-    \renewcommand\headrulewidth{0pt}
-    \renewcommand\footrulewidth{0pt}
-    \fancyfoot[C]{\thepage}
+	\fancyhf{}
+	\renewcommand\headrulewidth{0pt}
+	\renewcommand\footrulewidth{0pt}
+	\fancyfoot[C]{\thepage}
 }
 
 %% 定义正文 pagestyle
 \fancypagestyle{GZU@main}{
-    \fancyhf{}
-    \renewcommand\headrulewidth{0.5pt}
-    \renewcommand\footrulewidth{0pt}
-    \fancyhead[L]{\leftmark}
-    \fancyhead[R]{\protect\nouppercase\GZU@title}
-    \ifthenelse{\boolean{@twoside}}{
-        \fancyfoot[OR,EL]{\thepage}
-    }{%
-        \fancyfoot[C]{\thepage}
-    }%
+	\fancyhf{}
+	\renewcommand\headrulewidth{0.5pt}
+	\renewcommand\footrulewidth{0pt}
+	\fancyhead[L]{\leftmark}
+	\fancyhead[R]{\protect\nouppercase\GZU@title}
+	\ifthenelse{\boolean{@twoside}}{
+		\fancyfoot[OR,EL]{\thepage}
+	}{%
+		\fancyfoot[C]{\thepage}
+	}%
 }
 
 %% 内部实现 正文样式
 \newcommand\GZU@mainmatter{
-    \clearpage
-    \setcounter{page}{1}
-    \pagestyle{GZU@main}
-    \pagenumbering{arabic}
-    \onehalfspacing
+	\clearpage
+	\setcounter{page}{1}
+	\pagestyle{GZU@main}
+	\pagenumbering{arabic}
+	\setstretch{1.5}
 }
 
 %%% 内部实现 正文前样式
 \newcommand\GZU@frontmatter{
-    \pagenumbering{roman}
-    \pagestyle{GZU@front}
+	\pagenumbering{roman}
+	\pagestyle{GZU@front}
 }
 
 
 \renewcommand\mainmatter{
-    \GZU@mainmatter
+	\GZU@mainmatter
 }
 
 
 \renewcommand\frontmatter{
-    \GZU@frontmatter
+	\GZU@frontmatter
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 重定义页面样式结束 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %重定义附录
 \renewenvironment{appendices}{
-    \appendix\addappheadtotoc
+	\appendix\addappheadtotoc
 }{}
 % 定义致谢章节
 \newcommand{\acknowledgments}[1][致谢]{
-    \chapter*{\centering{#1}}
-    \addcontentsline{toc}{chapter}{#1}
-    \markboth{#1}{#1}
+	\chapter*{\centering{#1}}
+	\addcontentsline{toc}{chapter}{#1}
+	\markboth{#1}{#1}
 }
 
 
@@ -680,19 +792,19 @@
 
 %% 单页页边距
 \newcommand{\GZU@mkoneside}{
-    \geometry{top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
+	\geometry{top=2.9cm,bottom=2.4cm,left=2.5cm,right=2.5cm}
 }
 %% 双页页边距
 \newcommand{\GZU@mktwoside}{
-    \geometry{top=2.9cm,bottom=2.4cm,inner=2.9cm,outer=2.5cm}
+	\geometry{top=2.9cm,bottom=2.4cm,inner=2.9cm,outer=2.5cm}
 }
 
 
 % 设置文档页边距
 \ifthenelse{\boolean{@twoside}}{%
-    \GZU@mktwoside
+	\GZU@mktwoside
 }{%
-    \GZU@mkoneside
+	\GZU@mkoneside
 }%
 %%%%%%%%%%%%%%%%%%%%%%%%% 页边距设置结束 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -703,21 +815,21 @@
 
 %% 自定义设置 ctex 样式
 \ctexset{
-    chapter={
-        format=\Large\centering\bfseries,
-        beforeskip=0pt,
-        afterskip=8pt,
-    },
-    section={
-        format=\large\bfseries
-    },
-    subsection={
-        format=\normalsize\bfseries
-    },
-    appendix={
-        name={附录},
-    },
-    bibname=\centering{参考文献}
+	chapter={
+	  format=\Large\centering\bfseries,
+	  beforeskip=0pt,
+	  afterskip=8pt,
+	 },
+	section={
+	  format=\large\bfseries
+	 },
+	subsection={
+			format=\normalsize\bfseries
+		},
+	appendix={
+			name={附录},
+		},
+	bibname=\centering{参考文献}
 }
 
 %%图表设置
@@ -749,6 +861,56 @@
 {}{\titlerule*[8pt]{.}\contentspage}
 
 
+
+\newlength{\GZU@abbrlen}
+\newlength{\GZU@maxabbrlen}
+\newlength{\GZU@ennomlen}
+\newlength{\GZU@maxennomlen}
+\newlength{\GZU@spllen}
+\setlength{\GZU@spllen}{5pt}
+\newcommand{\GZU@getmaxwidth}[3]{%
+	\ifdim #2>#3\relax
+		\setlength{#1}{#2}%
+	\else
+		\setlength{#1}{#3}%
+	\fi
+}
+\pgfkeys{
+	/nomgroups/.unknown/.code = {
+			\pgfkeyssetvalue{\pgfkeyscurrentpath/\pgfkeyscurrentname}{#1}
+		},
+}
+
+\newcommand{\setnomgroup}[2]{
+	\pgfkeys{/nomgroups/#1 = #2}
+}
+
+
+\setnomgroup{A}{缩略语对照表}
+\setnomgroup{S}{符号表}
+\setnomgroup{N}{术语表}
+
+\makenomenclature
+
+\newcommand{\abbritem}[4][A]{#2（#3, #4）\nomenclature[A]{#4}{#3，#2}
+	% \settowidth{\GZU@abbrlen}{#4}
+	% \settowidth{\GZU@ennomlen}{#3}
+	% \GZU@getmaxwidth{\GZU@maxabbrlen}{\GZU@abbrlen}{\GZU@maxabbrlen}
+	% \GZU@getmaxwidth{\GZU@maxennomlen}{\GZU@ennomlen}{\GZU@maxennomlen}
+	%\nomenclature[#1]{\parbox[t]{\GZU@maxabbrlen}{#4} \hspace{5pt} \parbox[t]{\GZU@maxennomlen+\GZU@spllen}{#3}}{\parbox[t]{\textwidth-\GZU@maxabbrlen- \GZU@maxennomlen -\GZU@maxennomlen-\GZU@spllen}{#2}}
+}
+\newcommand{\nomitem}[3][N]{#2（#3）\nomenclature[#1]{#3}{#2}}
+\newcommand{\termitem}[3][N]{#2\nomenclature[#1]{#2}{#3}}
+
+
+\renewcommand\nomgroup[1]{%
+	\item[\bfseries
+	            \pgfkeysvalueof{/nomgroups/#1}
+	      ]}
+
+\renewcommand{\nomname}{术语对照表}
+
+\setstretch{1.6}
 \endinput
 %%
 %% End of file `GZUthesis.cls'.

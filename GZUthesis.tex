@@ -37,6 +37,8 @@
             \item 增加模板参数，调整 \texttt{Times New Roman},\texttt{ Arial}, \texttt{华文楷体}字体的搜索策略，优化编译
             \item 其他优化
         \end{itemize}
+      \item[1.1.3] (2026-03-13) 添加双面打印空白页水印，优化行间距
+        
     \end{itemize}
 
 
@@ -66,6 +68,9 @@
         \item[pdfpages] 插入pdf文件，实现插入承诺书
         \item[ulem] 用于实现下划线样式
         \item[bicaption] 用于实现中英图表说明
+        \item[draftwatermark] 开启空白页水印时启用
+        \item[xcolor] 开启空白页水印时启用
+        \item[graphicx] 开启空白页水印时启用
     \end{description}
 
     \subsection{内置样式}
@@ -140,6 +145,13 @@
             \item[Arial] 搜索系统字体 \texttt{Arial}
             \item[Times New Roman] 搜索系统字体 \texttt{Times New Roman}
          \end{description}
+    \end{function}
+
+    \begin{function}[added=2026-03-13]{watermark}
+        \begin{syntax}
+            watermark
+        \end{syntax}
+        若使用 watermark 参数，则当双面打印时会在空白页面添加``此页无正文''水印
     \end{function}
 
     \subsection{宏包命令}

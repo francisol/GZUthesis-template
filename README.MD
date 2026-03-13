@@ -7,6 +7,7 @@
 基于 book 制作，使用 xelatex 编译，本模板在Overleaf上同步更新：[Overleaf 模板](https://www.overleaf.com/latex/templates/gui-zhou-da-xue-yan-jiu-sheng-bi-ye-lun-wen-mo-ban/tstnysppbxvh)。
 
 ### 更新历史
+- **1.1.3** (2026-03-13) 添加双面打印空白页水印，优化行间距
 
 - **1.1.2** (2025-01-12) 调整字体搜索策略，以及其他优化
     - 增加模板参数 `tnra` 启用 Times New Roman, Arial 字体 系统需要有对应字体
