@@ -34,11 +34,14 @@
         \end{itemize}
         \item[1.1.2] (2025-01-02) 调整字体搜索策略，以及其他优化
         \begin{itemize}
-            \item 增加模板参数，调整 \texttt{Times New Roman},\texttt{ Arial}, \texttt{华文楷体}字体的搜索策略，优化编译
+            \item 增加模板参数，调整 \texttt{Times New Roman},\texttt{ Arial}, \texttt{华文行楷}字体的搜索策略，优化编译
             \item 其他优化
         \end{itemize}
       \item[1.1.3] (2026-03-13) 添加双面打印空白页水印，优化行间距
       \item[1.1.4] (2026-04-22) 调整论文模板排版与校徽资源，添加盲审回复模版
+      \item[2.0.0] (2026-04-22) 根据贵州大学研究生院 2026 年 3 月 9 日发布的
+      \href{https://gs.gzu.edu.cn/2026/0309/c11824a265403/page.htm}{《关于规范贵州大学研究生学位论文写作格式的通知》}
+      调整新版论文格式与字体策略
         
     \end{itemize}
 
@@ -48,7 +51,9 @@
 
 
     本模板提供贵州大学硕士博士\sout{以及本科生版本的}学位(毕业)论文模板。
-    本模板依据2022年发布《贵州大学研究生学位论文格式》、《贵州大学研究生学位论文盲评封面格式》制作。
+    本模板当前版主要依据贵州大学研究生院 2026 年 3 月 9 日发布的
+    \href{https://gs.gzu.edu.cn/2026/0309/c11824a265403/page.htm}{《关于规范贵州大学研究生学位论文写作格式的通知》}
+    及其附件《贵州大学研究生学位论文格式》调整；旧版模板依据 2022 年发布《贵州大学研究生学位论文格式》、《贵州大学研究生学位论文盲评封面格式》制作。
 
     本模板亦在\href{https://www.overleaf.com/latex/templates/gui-zhou-da-xue-yan-jiu-sheng-bi-ye-lun-wen-mo-ban/tstnysppbxvh}{Overleaf} 提供
 
@@ -80,12 +85,12 @@
     参考文献样式未在宏包中限制，但在样例文件中给出国标格式。
 
     \section{已知问题}
-    由于平台字体限制，除windows 平台外，其他平台不能按照模板规范显示，例如 linux系统使用的不是Sim*字体，部分扩展区文字显示乱码。 在非Windows系统，模板默认不适用 \texttt{Times New Roman}, \texttt{Arial}, \texttt{华文楷体}等字体。
-    若系统中有\texttt{Times New Roman}, \texttt{Arial} 字体 请使用  包选项 \textbf{tnra} 启用。
+    由于平台字体限制，除windows 平台外，其他平台不能按照模板规范显示，例如 linux系统默认使用的不是Sim*字体，部分扩展区文字可能显示乱码。若系统中有对应字体，请使用包选项 \textbf{windows} 启用 Windows 字体模式；该选项会自动尝试启用 \texttt{Times New Roman}, \texttt{Arial}, \texttt{华文行楷}等字体。
+    若只想单独启用\texttt{Times New Roman}, \texttt{Arial} 字体，请使用包选项 \textbf{tnra}。
 
     中文字体由 \textbf{ctex}提供，模板并未修改。
 
-    盲审版首页 \textbf{XX 届X士研究生学位论文} 字样为华文行楷（STXINGKA）。在非Windows 系统下， 若系统有该字体或文档目录有STXINGKA.TTF文件，则使用 包选项 \textbf{hwxk} 启用华文行楷， 否则使用楷体。
+    盲审版首页 \textbf{XX 届X士研究生学位论文} 字样为华文行楷（STXINGKA）。使用包选项 \textbf{windows} 时会自动尝试启用华文行楷；若只想单独启用该字体，可使用包选项 \textbf{hwxk}。
 
 
     \textbf{页面布局并未一比一复刻，但是没那么离谱。}
@@ -117,7 +122,7 @@
         \begin{syntax}
             windows
         \end{syntax}
-        若使用windows参数，则尝试在系统或者文档当前目录下搜索Sim*字体并使用，该参数仅在非windows 系统下有效。
+        若使用windows参数，则尝试在系统或者文档当前目录下搜索 Windows 常用论文排版字体并使用，同时自动启用 \textbf{hwxk} 与 \textbf{tnra} 字体检查。
         \begin{description}
             \item[宋体] 搜索系统字体 \texttt{SimSun} 或者当前目录下 \texttt{simsun.ttc}
             \item[仿宋] 搜索系统字体 \texttt{FangSong} 或者当前目录下 \texttt{simfang.ttf}
@@ -130,7 +135,7 @@
         \begin{syntax}
             hwxk
         \end{syntax}
-        若使用 hwxk 参数，则尝试在系统或者文档当前目录下搜索 \texttt{华文楷体} 字体并使用，该参数仅在非windows 系统下有效。
+        若使用 hwxk 参数，则尝试在系统或者文档当前目录下搜索 \texttt{华文行楷} 字体并使用。使用 \textbf{windows} 参数时会自动启用该检查。
         \begin{description}
             \item[华文行楷] 搜索系统字体 \texttt{STXINGKA} 或者当前目录下 \texttt{STXINGKA.TTF}
 
@@ -141,7 +146,7 @@
         \begin{syntax}
             tnra
         \end{syntax}
-        若使用 tnra 参数，则尝试在系统搜索 \texttt{Arial} 和 \texttt{Times New Roman} 字体并使用，该参数仅在非windows 系统下有效。
+        若使用 tnra 参数，则尝试在系统搜索 \texttt{Arial} 和 \texttt{Times New Roman} 字体并使用。使用 \textbf{windows} 参数时会自动启用该检查。
         \begin{description}
             \item[Arial] 搜索系统字体 \texttt{Arial}
             \item[Times New Roman] 搜索系统字体 \texttt{Times New Roman}
@@ -181,6 +186,13 @@
             该命令为重定义命令，不会覆盖\cs{\@author}。
         \end{texnote}
 
+    \end{function}
+
+    \begin{function}[added=2026-04-22]{\department}
+        \begin{syntax}
+            \cs{department}\marg{培养单位} \\
+        \end{syntax}
+        该命令设置培养单位，会填充到终稿封面的“培养单位”字段中，默认留空。
     \end{function}
 
     \begin{function}[added=2024-08-18]{\date}
@@ -281,9 +293,6 @@
         \end{syntax}
         该命令设置学号，默认留空。
 
-        \begin{texnote}
-            本科模板预留参数，研究生无效。
-        \end{texnote}
     \end{function}
 
 
@@ -320,6 +329,13 @@
             \cs{classifyno}\marg{分类号}
         \end{syntax}
         该命令设置分中图类号，默认留空。
+    \end{function}
+
+    \begin{function}[added=2026-04-22]{\udcno}
+        \begin{syntax}
+            \cs{udcno}\marg{UDC分类号}
+        \end{syntax}
+        该命令设置 UDC 分类号，会填充到终稿封面顶部的“UDC 分类号”字段中，默认留空。
     \end{function}
 
     \subsubsection{控制类命令}
