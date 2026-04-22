@@ -65,8 +65,8 @@
 %% 常量
 \def\GZU@table@major{学科专业}
 \def\GZU@table@research{研究方向}
-\def\GZU@table@supervisor{导师}
-\def\GZU@table@author{研究生}
+\def\GZU@table@supervisor{导 \hfill 师}
+\def\GZU@table@author{研\hfill 究\hfill  生}
 \def\GZU@table@classfyno{分类号}
 \def\GZU@table@paperno{论文编号}
 \def\GZU@table@seclvl{密级}
@@ -157,7 +157,7 @@
 % 加载第三方宏包
 
 % \RequirePackage{titlesec}
-% \RequirePackage{tocloft}
+\RequirePackage[titles]{tocloft}
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
 % \RequirePackage{etoolbox}
@@ -238,7 +238,7 @@
 
 	%% 如有Times New Roman，将其作为默认字体
 	\IfFontExistsTF{Times New Roman}{
-		\setmainfont{Times New Roman}
+     \setmainfont{Times New Roman}
 	}{
 	}
 	%% 如有Arial，将其作为无衬线字体
@@ -303,7 +303,7 @@
 	\fi
 }
 
-\ifwindows\GZU@hwxkcheck\GZU@ntracheck\else\iffullfont
+\ifwindows\GZU@hwxkcheck\GZU@tnracheck\else\iffullfont
 		\GZU@usewindowsfont
 	\fi\fi
 \ifchecktnra\GZU@tnracheck\fi
@@ -351,7 +351,7 @@
 
   % ----------------------------
   % 重定义 cleardoublepage：
-  % 在双面打印时的新增页添加“此页无证文“
+  % 在双面打印时的新增页添加“此页无正文“
   % ----------------------------
   \renewcommand{\cleardoublepage}{%
     \clearpage
@@ -420,9 +420,9 @@
 %% 封面表格字体 三号黑体
 \newcommand{\GZU@font@review@table}{ \CJKfamily+{zhhei} \zihao{3} }
 %% 摘要内容字体 宋体 默认英文字体 四号字体
-\newcommand{\GZU@font@abscontent}{\songti \zihao{4}\rmfamily}
-%% 关键词标题字体:黑体 四字号
-\newcommand{\GZU@font@keywstitle}{\heiti \zihao{4}}
+\newcommand{\GZU@font@abscontent}{\songti \zihao{4}}
+%% 关键词标题字体:黑体 四字号 西文加粗
+\newcommand{\GZU@font@keywstitle}{\heiti  \zihao{4}\bfseries}
 %% 关键词正文字体:宋体 四字号
 \newcommand{\GZU@font@keywscontent}{\songti \zihao{4}}
 
@@ -436,7 +436,7 @@
 % 定义文档结构
 %% 封面表格key长度
 \newcommand{\GZU@table@key}[1]{
-	\makebox[4em][s]{#1}
+	\makebox[4\ccwd][s]{#1}%
 }
 
 %% 定义摘要环境
@@ -455,6 +455,7 @@
 }{}
 %% 定义关键词环境
 \newcommand{\keywords}[2][关键词：]{
+  \vspace{16pt}
 	\par \noindent {\GZU@font@keywstitle #1} %
 	{\GZU@font@keywscontent #2}
 }
@@ -478,6 +479,27 @@
 \newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}}
 %% 波浪下划线
 \newcommand\dlwave[2][4cm]{\hskip1pt\uwave{\hb@xt@ #1{\hss#2\hss}}}
+
+\newcommand{\GZU@setmaxwidth}[2]{%
+	\ifdim #2>#1\relax
+		\setlength{#1}{#2}%
+	\fi
+}
+
+\newlength{\GZU@covermincontentlen}
+\newlength{\GZU@covercontentpadding}
+\setlength{\GZU@covermincontentlen}{4cm}
+\setlength{\GZU@covercontentpadding}{0.2cm}
+
+\newsavebox{\GZU@reviewmajorbox}
+\newsavebox{\GZU@reviewresearchbox}
+\newlength{\GZU@reviewmaxcontentlen}
+
+\newsavebox{\GZU@finalmajorbox}
+\newsavebox{\GZU@finalresearchbox}
+\newsavebox{\GZU@finalsupervisorbox}
+\newsavebox{\GZU@finalauthorbox}
+\newlength{\GZU@finalmaxcontentlen}
 
 
 
@@ -521,7 +543,7 @@
 	%
 	\begin{center}
 		\includegraphics[width=3.05cm]{logo/logo.eps}\\
-		\includegraphics[width=4.18cm,height=1.64cm]{logo/gzdx.png}
+		\includegraphics[width=4.18cm,height=1.64cm]{logo/gzdx.eps}
 	\end{center}
 	\setstretch{1.0}
 	\begin{center}
@@ -537,39 +559,20 @@
 			\end{center}
 		\end{minipage}
 	\end{center}
-%%%% 计算文本内容宽度，方便画波浪线
-  \newsavebox{\GZU@majorbox}
-	\newsavebox{\GZU@researchbox}
-	\newlength{\GZU@maxcontentlen}
-	\newlength{\GZU@mincontentlen}
-	% 设置最小长度为4cm（可以根据需要调整）
-	\setlength{\GZU@mincontentlen}{4cm}
-	
-	% 测量专业和研究方向的宽度（考虑字体样式）
-	\sbox{\GZU@majorbox}{\GZU@font@review@table \GZU@major}
-	\sbox{\GZU@researchbox}{\GZU@font@review@table \GZU@research}
-	
-	% 取两个内容宽度的最大值
-	\ifdim\wd\GZU@majorbox>\wd\GZU@researchbox
-		\setlength{\GZU@maxcontentlen}{\wd\GZU@majorbox}
-	\else
-		\setlength{\GZU@maxcontentlen}{\wd\GZU@researchbox}
-	\fi
-	
-	% 确保不少于4cm
-	\ifdim\GZU@maxcontentlen<\GZU@mincontentlen
-	\setlength{\GZU@maxcontentlen}{\GZU@mincontentlen}
-	\fi
-	
-	% 添加一点边距（比如增加0.2cm的余量）
-	\addtolength{\GZU@maxcontentlen}{0.2cm}
-%%%% 计算完成
-
-	\begin{center}
+	%%%% 计算文本内容宽度，方便画波浪线
+	\sbox{\GZU@reviewmajorbox}{\GZU@font@review@table \GZU@major}
+	\sbox{\GZU@reviewresearchbox}{\GZU@font@review@table \GZU@research}
+	\setlength{\GZU@reviewmaxcontentlen}{\wd\GZU@reviewmajorbox}
+	\GZU@setmaxwidth{\GZU@reviewmaxcontentlen}{\wd\GZU@reviewresearchbox}
+	\GZU@setmaxwidth{\GZU@reviewmaxcontentlen}{\GZU@covermincontentlen}
+	\addtolength{\GZU@reviewmaxcontentlen}{\GZU@covercontentpadding}
+	%%%% 计算完成
+  ~  \hspace{1cm}
+  \begin{center}
 		\setstretch{1.6}
 		\GZU@font@review@table
-    \GZU@table@major     \GZU@tablesep     \dlwave[\GZU@maxcontentlen]{\GZU@major}\\
-    \GZU@table@research  \GZU@tablesep     \dlwave[\GZU@maxcontentlen]{\GZU@research}\\
+		\GZU@table@major     \GZU@tablesep     \dlwave[\GZU@reviewmaxcontentlen]{\GZU@major}\\
+		\GZU@table@research  \GZU@tablesep     \dlwave[\GZU@reviewmaxcontentlen]{\GZU@research}\\
 	\end{center}
 
 	\vskip 90pt
@@ -624,18 +627,31 @@
 
 	\vskip 55pt
 
+	%%%% 计算最终版表格内容宽度，方便画下划线
+	\sbox{\GZU@finalmajorbox}{\GZU@font@final@table \GZU@major}
+	\sbox{\GZU@finalresearchbox}{\GZU@font@final@table \GZU@research}
+	\sbox{\GZU@finalsupervisorbox}{\GZU@font@final@table \GZU@supervisor}
+	\sbox{\GZU@finalauthorbox}{\GZU@font@final@table \GZU@author}
+	\setlength{\GZU@finalmaxcontentlen}{\wd\GZU@finalmajorbox}
+	\GZU@setmaxwidth{\GZU@finalmaxcontentlen}{\wd\GZU@finalresearchbox}
+	\GZU@setmaxwidth{\GZU@finalmaxcontentlen}{\wd\GZU@finalsupervisorbox}
+	\GZU@setmaxwidth{\GZU@finalmaxcontentlen}{\wd\GZU@finalauthorbox}
+	\GZU@setmaxwidth{\GZU@finalmaxcontentlen}{\GZU@covermincontentlen}
+	\addtolength{\GZU@finalmaxcontentlen}{\GZU@covercontentpadding}
+	%%%% 计算完成
+
 	\noindent
 	\begin{center}
-		\setstretch{1.4}
+		\setstretch{1.5}
 		\GZU@font@final@table
-		\GZU@table@key{\GZU@table@major} \GZU@tablesep \dlmu{\GZU@major}
+		\GZU@table@key{\GZU@table@major}\GZU@tablesep \dlmu[\GZU@finalmaxcontentlen]{\GZU@major}
 
-		\GZU@table@key{\GZU@table@research} \GZU@tablesep \dlmu{\GZU@research}
+		\GZU@table@key{\GZU@table@research}\GZU@tablesep \dlmu[\GZU@finalmaxcontentlen]{\GZU@research}
 
 
-		\GZU@table@key{\GZU@table@supervisor} \GZU@tablesep \dlmu{\GZU@supervisor}
+		\GZU@table@key{\GZU@table@supervisor}\GZU@tablesep \dlmu[\GZU@finalmaxcontentlen]{\GZU@supervisor}
 
-		\GZU@table@key{\GZU@table@author} \GZU@tablesep \dlmu{\GZU@author}
+		\GZU@table@key{\GZU@table@author}\GZU@tablesep \dlmu[\GZU@finalmaxcontentlen]{\GZU@author}
 	\end{center}
 	\vskip 80pt
 	\begin{center}
@@ -734,8 +750,8 @@
 	\fancyhf{}
 	\renewcommand\headrulewidth{0.5pt}
 	\renewcommand\footrulewidth{0pt}
-	\fancyhead[L]{\leftmark}
-	\fancyhead[R]{\protect\nouppercase\GZU@title}
+	\fancyhead[C]{\leftmark}
+	% \fancyhead[R]{\protect\nouppercase\GZU@title}
 	\ifthenelse{\boolean{@twoside}}{
 		\fancyfoot[OR,EL]{\thepage}
 	}{%
@@ -772,6 +788,7 @@
 
 %重定义附录
 \renewenvironment{appendices}{
+  \newpage{}
 	\appendix\addappheadtotoc
 }{}
 % 定义致谢章节
@@ -796,7 +813,7 @@
 }
 %% 双页页边距
 \newcommand{\GZU@mktwoside}{
-	\geometry{top=2.9cm,bottom=2.4cm,inner=2.9cm,outer=2.5cm}
+	\geometry{top=2.9cm,bottom=2.4cm,inner=2.8cm,outer=2.2cm}
 }
 
 
@@ -832,11 +849,13 @@
 	bibname=\centering{参考文献}
 }
 
-%%图表设置
+%%图表以及其他编号设置设置
 \captionsetup[figure][bi-second]{name=Figure}
 \captionsetup[table][bi-second]{name=Table}
+\captionsetup[figure]{justification=centering,singlelinecheck=true}
 \renewcommand{\thefigure}{\arabic{chapter}-\arabic{figure}}
 \renewcommand{\thetable}{\arabic{chapter}-\arabic{table}}
+\renewcommand{\theequation}{\arabic{chapter}-\arabic{equation}}
 
 % 汉化
 %%
@@ -845,11 +864,15 @@
 
 % 目录样式
 \renewcommand*\contentsname{\begin{center}目\quad 录\end{center}}
-\renewcommand\listfigurename{图版}
-\renewcommand\listtablename{表版}
+\renewcommand\listfigurename{图目录}
+\renewcommand\listtablename{表目录}
+% \cftsetpnumwidth{2em}      % 页码宽度
+% \cftsetindents{lot}{0em}{2.5em}  % 表格目录的缩进
+% \cftsetindents{lof}{0em}{2.5em}  % 图形目录的缩进
+
 %% 目录深度
 \setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{3}
+\setcounter{tocdepth}{2}
 \titlecontents{chapter}[0pt]{\addvspace{2pt}\filright}
 {\contentspush{\thecontentslabel }\ }
 {}{\titlerule*[8pt]{.}\contentspage}
@@ -860,7 +883,7 @@
 {\contentspush{\thecontentslabel }\ }
 {}{\titlerule*[8pt]{.}\contentspage}
 
-
+%%%%%%%%%%%%%%%%%%%定义缩略语术语符号表%%%%%%%%%%%%%%%%
 
 \newlength{\GZU@abbrlen}
 \newlength{\GZU@maxabbrlen}
@@ -891,26 +914,41 @@
 \setnomgroup{N}{术语表}
 
 \makenomenclature
-
-\newcommand{\abbritem}[4][A]{#2（#3, #4）\nomenclature[A]{#4}{#3，#2}
-	% \settowidth{\GZU@abbrlen}{#4}
-	% \settowidth{\GZU@ennomlen}{#3}
-	% \GZU@getmaxwidth{\GZU@maxabbrlen}{\GZU@abbrlen}{\GZU@maxabbrlen}
-	% \GZU@getmaxwidth{\GZU@maxennomlen}{\GZU@ennomlen}{\GZU@maxennomlen}
-	%\nomenclature[#1]{\parbox[t]{\GZU@maxabbrlen}{#4} \hspace{5pt} \parbox[t]{\GZU@maxennomlen+\GZU@spllen}{#3}}{\parbox[t]{\textwidth-\GZU@maxabbrlen- \GZU@maxennomlen -\GZU@maxennomlen-\GZU@spllen}{#2}}
+% 缩略语 四个参数分别为 分组；中文；英文；缩写，并在当前位置输出 “中文（英文，缩写）”格式
+\newcommand{\abbritem}[4][A]{#2（#3, #4）\nomenclature[#1]{\protect\makebox[0.18\textwidth][l]{#4}\hspace{0.03\textwidth}\protect\parbox[t]{0.38\textwidth}{#3}}{\hspace{0.03\textwidth}\protect\parbox[t]{0.38\textwidth}{#2}}
 }
-\newcommand{\nomitem}[3][N]{#2（#3）\nomenclature[#1]{#3}{#2}}
-\newcommand{\termitem}[3][N]{#2\nomenclature[#1]{#2}{#3}}
+% 术语 三个参数分别为 分组；中文；英文。在定前位置打印 “中文（英文）”
+\newcommand{\nomitem}[3][N]{#2（#3）\nomenclature[#1]{\protect\parbox[t]{0.38\textwidth}{#3}}{\hspace{0.04\textwidth}\protect\parbox[t]{0.58\textwidth}{#2}}}
+% 术语 三个参数分别为 分组；中文；解释。在定前位置打印 “中文”
+\newcommand{\termitem}[3][N]{#2\nomenclature[#1]{\protect\parbox[t]{0.38\textwidth}{#2}}{\hspace{0.04\textwidth}\protect\parbox[t]{0.58\textwidth}{#3}}}
 
-
+\newcommand{\symbolitem}[2]{
+  \nomenclature[S]{\protect\parbox[t]{0.3\textwidth}{#1}}{\hspace{0.04\textwidth}\protect\parbox[t]{0.66\textwidth}{#2}}
+}
 \renewcommand\nomgroup[1]{%
 	\item[\bfseries
 	            \pgfkeysvalueof{/nomgroups/#1}
 	      ]}
+\let\origthenomenclature\thenomenclature
+\let\origendthenomenclature\endthenomenclature
 
-\renewcommand{\nomname}{术语对照表}
+% 重定义环境
+\renewenvironment{thenomenclature}{%
+  \origthenomenclature
+  \setlength{\itemsep}{20pt}
+  \setlength{\parsep}{20pt}
+  \setlength{\topsep}{12pt}
+  \setlength{\partopsep}{20pt}
+  \setstretch{1.0}
+}{%
+  \origendthenomenclature
+  \newpage{}
+}
+\renewcommand{\nomname}{缩略语、术语、符号对照表}
+%%%%%%%%%%%%%%%%%%%%%%%%%% end
 
-\setstretch{1.6}
+\renewcommand*{\addvspace}[1]{}
 \endinput
 %%
 %% End of file `GZUthesis.cls'.
+
