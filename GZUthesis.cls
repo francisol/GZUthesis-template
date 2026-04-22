@@ -9,7 +9,7 @@
 
 % 声明文档类
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesPackage{GZUthesis}[2024/08/18 v1.1.3 Guizhou University Thesis Template]
+\ProvidesPackage{GZUthesis}[2026/04/22 v1.1.4 Guizhou University Thesis Template]
 \LoadClass[cs4size,a4paper,fancyhdr,fntef,oneside]{book}
 \RequirePackage{xkeyval}
 \RequirePackage{ifthen}
