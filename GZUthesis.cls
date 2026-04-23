@@ -52,6 +52,9 @@
 \def\GZU@date@month{ \the\month}
 \def\GZU@titlewidth{14cm} %题目宽度
 \def\GZU@titleheight{3em} %题目最多两行
+\newlength{\GZU@committee@unitwidth}
+\newlength{\GZU@committee@namewidth}
+\newlength{\GZU@committee@titlewidth}
 
 \def\GZU@fontname@song{}
 \def\GZU@fontname@kai{}
@@ -174,9 +177,31 @@
 %% 答辩秘书
 \newcommand{\defsec}[1]{\global\def\GZU@defsec{#1}}
 %% 添加答辩专家
-\newcommand{\addexpert}[1]{\listadd{\GZU@experts}{#1}}
+\newcommand{\GZU@committee@setmaxwidth}[2]{%
+	\settowidth{\@tempdima}{#2}%
+	\ifdim\@tempdima>#1\relax
+		\global#1=\@tempdima
+	\fi
+}
+\newcommand{\GZU@committee@measure}[4]{%
+	\GZU@committee@setmaxwidth{\GZU@committee@unitwidth}{#1}%
+	\GZU@committee@setmaxwidth{\GZU@committee@namewidth}{#2}%
+	\GZU@committee@setmaxwidth{\GZU@committee@titlewidth}{#3}%
+}
+\newcommand{\GZU@committee@spread}[2]{{\hbadness=10000\makebox[#1][s]{#2}}}
+\newcommand{\GZU@committee@row}[4]{%
+	\GZU@committee@spread{\GZU@committee@unitwidth}{#1} &
+	\GZU@committee@spread{\GZU@committee@namewidth}{#2} &
+	\GZU@committee@spread{\GZU@committee@titlewidth}{#3}#4\\
+}
+\let\GZU@committee@entry\GZU@committee@row
+\newcommand{\addexpert}[3]{%
+	\listadd{\GZU@experts}{\GZU@committee@entry{#1}{#2}{#3}{}}%
+}
 %% 答辩主席
-\newcommand{\chairman}[1]{\global\def\GZU@chairman{#1}}
+\newcommand{\chairman}[3]{%
+	\global\def\GZU@chairman{\GZU@committee@entry{#1}{#2}{#3}{（主席）}}%
+}
 %% 学科专业
 \newcommand{\major}[1]{\global\def\GZU@major{#1}}
 %% 班级
@@ -642,7 +667,7 @@
 
 	\noindent
 	\begin{center}
-		\setstretch{1.5}
+		\setstretch{1.8}
 		\GZU@font@final@table
 		\GZU@table@key{\GZU@table@major}\GZU@tablesep \dlmu[\GZU@finalmaxcontentlen]{\GZU@major}
 
@@ -655,7 +680,7 @@
 	\end{center}
 	\vskip 80pt
 	\begin{center}
-		\setstretch{1.6}
+		\setstretch{1.7}
 		\GZU@font@final@address \GZU@address
 		\vskip -5pt
 		\GZU@font@final@date \GZU@date@year 年 \GZU@date@month 月
@@ -690,16 +715,24 @@
 	\hskip 65pt
 	\begin{minipage}{.6\linewidth}
 		\setlength{\baselineskip}{100pt}
-		\renewcommand{\do}[1]{##1 \newline}%
-		\begin{spacing}{1.65}
+		\renewcommand{\do}[1]{##1}%
+		\begin{spacing}{2}
 			\GZU@font@defense@main
 			\GZU@defense@respondent\GZU@tablesep \GZU@author
 
-			\GZU@defense@committee\GZU@tablesep
+			\GZU@defense@committee\GZU@tablesep\par
+			\setlength{\GZU@committee@unitwidth}{0pt}%
+			\setlength{\GZU@committee@namewidth}{0pt}%
+			\setlength{\GZU@committee@titlewidth}{0pt}%
+			{\let\GZU@committee@entry\GZU@committee@measure
+				\GZU@chairman
+				\dolistloop\GZU@experts}%
+			\begin{tabular}[t]{@{}l@{\hspace{2.4em}}l@{\hspace{.8em}}l@{}}
+				\GZU@chairman
+				\dolistloop\GZU@experts
+			\end{tabular}
+\vspace{-10pt}
 
-			\GZU@chairman \GZU@tablesep
-
-			\dolistloop\GZU@experts
 			\GZU@defense@secretary\GZU@tablesep \GZU@defsec
 
 			\GZU@defense@date\GZU@tablesep     \GZU@defdate
@@ -951,4 +984,3 @@
 \endinput
 %%
 %% End of file `GZUthesis.cls'.
-

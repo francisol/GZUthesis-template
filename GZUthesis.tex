@@ -214,17 +214,17 @@
 
     \begin{function}[added=2024-08-18]{\addexpert}
         \begin{syntax}
-            \cs{addexpert}\marg{XXXXXX 大学 XXX+职称} \\
+            \cs{addexpert}\marg{单位}\marg{姓名}\marg{职称} \\
         \end{syntax}
-        该命令为答辩专家列表添加一个专家信息，可以重复调用，只会追加信息。添加格式为 “XXXXXX 大学 XXX+职称”。
+        该命令为答辩专家列表添加一个专家信息，可以重复调用，只会追加信息。单位、姓名、职称会分列排版，便于对齐。
     \end{function}
 
 
     \begin{function}[added=2024-08-18]{\chairman}
         \begin{syntax}
-            \cs{chairman}\marg{XXXXXX 大学 XXX+职称} \
+            \cs{chairman}\marg{单位}\marg{姓名}\marg{职称} \\
         \end{syntax}
-        该命令设置答辩主席，默认留空。格式为 “XXXXXX 大学 XXX+职称”。
+        该命令设置答辩主席，默认留空。单位、姓名、职称会分列排版，职称后自动追加“（主席）”。
     \end{function}
 
 
