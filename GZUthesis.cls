@@ -9,7 +9,7 @@
 
 % 声明文档类
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesPackage{GZUthesis}[2026/04/22 v1.1.4 Guizhou University Thesis Template]
+\ProvidesPackage{GZUthesis}[2026/04/29 v1.1.4 Guizhou University Thesis Template]
 \LoadClass[cs4size,a4paper,fancyhdr,fntef,oneside]{book}
 \RequirePackage{xkeyval}
 \RequirePackage{ifthen}
@@ -159,7 +159,7 @@
 
 % 加载第三方宏包
 
-% \RequirePackage{titlesec}
+% \RequirePackage[loadonly]{titlesec}
 \RequirePackage[titles]{tocloft}
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
@@ -319,12 +319,12 @@
 		}
 	}
 	\iffullfont
-		\setCJKmainfont[BoldFont=\GZU@fontname@hei,ItalicFont=\GZU@fontname@kai]{\GZU@fontname@song}
+		\setCJKmainfont[AutoFakeBold,AutoFakeSlant]{\GZU@fontname@song}
 		\setCJKmonofont{\GZU@fontname@fsong}
 		\setCJKfamilyfont{zhsong}{\GZU@fontname@song}
 		\setCJKfamilyfont{zhhei}{\GZU@fontname@hei}
 		\setCJKfamilyfont{zhfs}{\GZU@fontname@fsong}
-		\setCJKfamilyfont {zhkai} {\GZU@fontname@kai}
+		\setCJKfamilyfont{zhkai}{\GZU@fontname@kai}
 	\fi
 }
 
@@ -533,12 +533,12 @@
 \newcommand\GZU@mktitle{
 	%%  根据class 参数更新内部变量
 	\ifdoctor
-		\global\def\GZU@final@topic{\GZU@gradyear 届博士研究生学位论文}
-		\global\def\GZU@review@topic{\GZU@gradyear 届博士学位论文}
+    \global\def\GZU@final@topic{\GZU@gradyear\!\hskip 6pt\!届博士研究生学位论文}
+    \global\def\GZU@review@topic{\GZU@gradyear\!\hskip 6pt\!届博士学位论文}
 		\global\edef\GZU@defense@topic{博\GZU@defense@topic}
 	\else\ifmaster
-			\global\def\GZU@final@topic{\GZU@gradyear 届硕士研究生学位论文}
-			\global\def\GZU@review@topic{\GZU@gradyear 届硕士学位论文}
+    \global\def\GZU@final@topic{{\GZU@gradyear}\!\hskip 6pt\!届硕士研究生学位论文}
+    \global\def\GZU@review@topic{\GZU@gradyear\!\hskip 6pt\!届硕士学位论文}
 			\global\edef\GZU@defense@topic{硕\GZU@defense@topic}
 		\else
 			\ClassError{GZUthesis}{type error: no impl for bachelor }
@@ -693,13 +693,14 @@
 %% 制作答辩信息页面
 \newcommand\GZU@mkpage@defense{
 	\thispagestyle{empty}
-	~\vskip 18pt
+
+  ~\vskip 60pt 
 		{
 			\noindent\centering \GZU@font@defense@topic   \GZU@defense@topic
 
 		}
 
-	\vskip 55pt
+    \vspace{55pt}
 	\noindent
 	\begin{center}
 		\begin{minipage}[c][\GZU@titleheight][t]{\GZU@titlewidth}
@@ -712,11 +713,11 @@
 
 
 
-	\hskip 65pt
+	\hskip 60pt
 	\begin{minipage}{.6\linewidth}
-		\setlength{\baselineskip}{100pt}
+		% \setlength{\baselineskip}{100pt}
 		\renewcommand{\do}[1]{##1}%
-		\begin{spacing}{2}
+		\begin{spacing}{1.6}
 			\GZU@font@defense@main
 			\GZU@defense@respondent\GZU@tablesep \GZU@author
 
@@ -727,7 +728,7 @@
 			{\let\GZU@committee@entry\GZU@committee@measure
 				\GZU@chairman
 				\dolistloop\GZU@experts}%
-			\begin{tabular}[t]{@{}l@{\hspace{2.4em}}l@{\hspace{.8em}}l@{}}
+			\begin{tabular}[t]{@{}l@{\hspace{5em}}l@{\hspace{2em}}l@{}}
 				\GZU@chairman
 				\dolistloop\GZU@experts
 			\end{tabular}
@@ -863,19 +864,28 @@
 %% 终稿添加承诺书
 \iffinal \ifgrad\AtEndDocument{\fillblankpage\includepdf{logo/promise.pdf}} \fi\fi
 
+
 %% 自定义设置 ctex 样式
 \ctexset{
+	% autoindent=true,
 	chapter={
-	  format=\Large\centering\bfseries,
-	  beforeskip=0pt,
-	  afterskip=8pt,
-	 },
+		format=\Large\centering\heiti,
+		fixskip=true,
+		beforeskip=0pt,
+		afterskip=20pt,
+	},
 	section={
-	  format=\large\bfseries
-	 },
+    fixskip=true,
+		beforeskip=16pt,
+		afterskip=16pt,
+		format=\large\heiti\bfseries,
+	},
 	subsection={
-			format=\normalsize\bfseries
-		},
+    fixskip=true,
+		beforeskip=12pt,
+		afterskip=12pt,
+		format=\normalsize\heiti\bfseries,
+	},
 	appendix={
 			name={附录},
 		},
@@ -899,22 +909,19 @@
 \renewcommand*\contentsname{\begin{center}目\quad 录\end{center}}
 \renewcommand\listfigurename{图目录}
 \renewcommand\listtablename{表目录}
-% \cftsetpnumwidth{2em}      % 页码宽度
-% \cftsetindents{lot}{0em}{2.5em}  % 表格目录的缩进
-% \cftsetindents{lof}{0em}{2.5em}  % 图形目录的缩进
 
 %% 目录深度
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{2}
-\titlecontents{chapter}[0pt]{\addvspace{2pt}\filright}
+\titlecontents{chapter}[0pt]{\filright}
 {\contentspush{\thecontentslabel }\ }
-{}{\titlerule*[8pt]{.}\contentspage}
-\titlecontents{section}[2em]{\addvspace{2pt}\filright}
+{}{\titlerule*[8pt]{\textperiodcentered}\contentspage}
+\titlecontents{section}[2em]{\filright}
 {\contentspush{\thecontentslabel }\ }
-{}{\titlerule*[8pt]{.}\contentspage}
-\titlecontents{subsection}[4em]{\addvspace{2pt}\filright}
+{}{\titlerule*[8pt]{\textperiodcentered}\contentspage}
+\titlecontents{subsection}[4em]{\filright}
 {\contentspush{\thecontentslabel }\ }
-{}{\titlerule*[8pt]{.}\contentspage}
+{}{\titlerule*[8pt]{\textperiodcentered}\contentspage}
 
 %%%%%%%%%%%%%%%%%%%定义缩略语术语符号表%%%%%%%%%%%%%%%%
 
@@ -980,7 +987,6 @@
 \renewcommand{\nomname}{缩略语、术语、符号对照表}
 %%%%%%%%%%%%%%%%%%%%%%%%%% end
 
-\renewcommand*{\addvspace}[1]{}
 \endinput
 %%
 %% End of file `GZUthesis.cls'.
