@@ -693,7 +693,8 @@
 	\thispagestyle{empty}
 
 	~\vskip 60pt
-	{\noindent\centering \GZU@font@defense@topic \GZU@defense@topic}
+
+\noindent\centering{\GZU@font@defense@topic \GZU@defense@topic}
 
 	\vspace{55pt}
 	\noindent
