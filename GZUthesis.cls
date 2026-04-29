@@ -159,7 +159,6 @@
 
 % 加载第三方宏包
 
-% \RequirePackage[loadonly]{titlesec}
 \RequirePackage[titles]{tocloft}
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
@@ -869,7 +868,7 @@
 \ctexset{
 	% autoindent=true,
 	chapter={
-		format=\Large\centering\heiti,
+		format=\Large\centering\heiti\bfseries,
 		fixskip=true,
 		beforeskip=0pt,
 		afterskip=20pt,
@@ -882,6 +881,12 @@
 	},
 	subsection={
     fixskip=true,
+		beforeskip=12pt,
+		afterskip=12pt,
+		format=\normalsize\heiti\bfseries,
+	},
+    subsubsection={
+		fixskip=true,
 		beforeskip=12pt,
 		afterskip=12pt,
 		format=\normalsize\heiti\bfseries,
@@ -909,6 +914,20 @@
 \renewcommand*\contentsname{\begin{center}目\quad 录\end{center}}
 \renewcommand\listfigurename{图目录}
 \renewcommand\listtablename{表目录}
+\let\GZU@listoffigures\listoffigures
+\renewcommand{\listoffigures}{%
+	\begingroup
+	\renewcommand*{\addvspace}[1]{}%
+	\GZU@listoffigures
+	\endgroup
+}
+\let\GZU@listoftables\listoftables
+\renewcommand{\listoftables}{%
+	\begingroup
+	\renewcommand*{\addvspace}[1]{}%
+	\GZU@listoftables
+	\endgroup
+}
 
 %% 目录深度
 \setcounter{secnumdepth}{3}
@@ -920,6 +939,12 @@
 {\contentspush{\thecontentslabel }\ }
 {}{\titlerule*[8pt]{\textperiodcentered}\contentspage}
 \titlecontents{subsection}[4em]{\filright}
+{\contentspush{\thecontentslabel }\ }
+{}{\titlerule*[8pt]{\textperiodcentered}\contentspage}
+\titlecontents{figure}[0pt]{\filright}
+{\contentspush{\thecontentslabel }\ }
+{}{\titlerule*[8pt]{\textperiodcentered}\contentspage}
+\titlecontents{table}[0pt]{\filright}
 {\contentspush{\thecontentslabel }\ }
 {}{\titlerule*[8pt]{\textperiodcentered}\contentspage}
 
@@ -966,7 +991,7 @@
   \nomenclature[S]{\protect\parbox[t]{0.3\textwidth}{#1}}{\hspace{0.04\textwidth}\protect\parbox[t]{0.66\textwidth}{#2}}
 }
 \renewcommand\nomgroup[1]{%
-	\item[\bfseries
+	\item[\large\heiti\bfseries
 	            \pgfkeysvalueof{/nomgroups/#1}
 	      ]}
 \let\origthenomenclature\thenomenclature
@@ -975,11 +1000,11 @@
 % 重定义环境
 \renewenvironment{thenomenclature}{%
   \origthenomenclature
-  \setlength{\itemsep}{20pt}
-  \setlength{\parsep}{20pt}
+  \setlength{\itemsep}{10pt}
+  \setlength{\parsep}{16pt}
   \setlength{\topsep}{12pt}
-  \setlength{\partopsep}{20pt}
-  \setstretch{1.0}
+  \setlength{\partopsep}{16pt}
+  \setstretch{1}
 }{%
   \origendthenomenclature
   \newpage{}
