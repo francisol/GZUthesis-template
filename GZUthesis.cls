@@ -880,7 +880,7 @@
 %% 自定义 ctex 章节样式。
 \ctexset{
 	chapter={
-		format=\zihao{-4}\centering\heiti,
+		format=\large\centering\heiti\bfseries,
 		fixskip=true,
 		beforeskip=0pt,
 		afterskip=20pt,
@@ -889,19 +889,19 @@
 		fixskip=true,
 		beforeskip=16pt,
 		afterskip=16pt,
-		format=\zihao{5}\heiti\bfseries,
+		format=\normalsize\heiti\bfseries,
 	},
 	subsection={
 		fixskip=true,
 		beforeskip=12pt,
 		afterskip=12pt,
-		format=\zihao{5}\heiti\bfseries,
+		format=\normalsize\heiti\bfseries,
 	},
   subsubsection={
 		fixskip=true,
 		beforeskip=12pt,
 		afterskip=12pt,
-		format=\zihao{5}\heiti\bfseries,
+		format=\normalsize\heiti\bfseries,
 	},
 	bibname=\centering{参考文献}
 }
@@ -922,6 +922,21 @@
 \renewcommand*\contentsname{\begin{center}目\quad 录\end{center}}
 \renewcommand\listfigurename{图目录}
 \renewcommand\listtablename{表目录}
+
+\let\GZU@listoffigures\listoffigures
+\renewcommand{\listoffigures}{%
+	\begingroup
+	\renewcommand*{\addvspace}[1]{}%
+	\GZU@listoffigures
+	\endgroup
+}
+\let\GZU@listoftables\listoftables
+\renewcommand{\listoftables}{%
+	\begingroup
+	\renewcommand*{\addvspace}[1]{}%
+	\GZU@listoftables
+	\endgroup
+}
 
 %% 目录深度与目录项样式。
 \setcounter{secnumdepth}{3}
@@ -974,7 +989,7 @@
 	\nomenclature[S]{\protect\parbox[t]{0.1\textwidth}{#1}}{\hspace{20pt}\protect\parbox[t]{0.66\textwidth}{#2}}%
 }
 \renewcommand\nomgroup[1]{%
-	\item[\heiti\zihao{5}\pgfkeysvalueof{/nomgroups/#1}]%
+	\item[\heiti\normalsize\pgfkeysvalueof{/nomgroups/#1}]%
 }
 \let\GZU@orig@thenomenclature\thenomenclature
 \let\GZU@orig@endthenomenclature\endthenomenclature
@@ -982,7 +997,7 @@
 %% 重定义术语表环境的间距。
 \renewenvironment{thenomenclature}{%
 	\GZU@orig@thenomenclature
-	\setlength{\itemsep}{10pt}
+	\setlength{\itemsep}{8pt}
 	\setlength{\parsep}{10pt}
 	\setlength{\topsep}{8pt}
 	\setlength{\partopsep}{10pt}
