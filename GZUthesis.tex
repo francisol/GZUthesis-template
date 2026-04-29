@@ -380,6 +380,88 @@
         生成致谢章节，章节不编码，标题居中。命令参数为章节标题，默认为 \textbf{致谢}
     \end{function}
 
+    \subsubsection{缩略语、术语与符号表命令}
+
+    模板内置了基于 \pkg{nomencl} 的“缩略语、术语、符号对照表”。在正文开始前集中登记条目，并在目录之后、正文之前使用 \cs{printnomenclature} 输出。
+
+    \begin{function}[added=2026-04-29]{\abbrdef}
+        \begin{syntax}
+            \cs{abbrdef}\marg{中文名称}\marg{英文全称}\marg{缩写}
+        \end{syntax}
+        登记缩略语条目，固定写入 A 组“缩略语对照表”，不在当前位置输出正文。
+        \begin{texnote}
+            示例：
+            \begin{verbatim}
+\abbrdef{卷积神经网络}{Convolutional Neural Network}{CNN}
+\abbrdef{生成对抗网络}{Generative Adversarial Network}{GAN}
+            \end{verbatim}
+        \end{texnote}
+    \end{function}
+
+    \begin{function}[added=2026-04-29]{\abbritem}
+        \begin{syntax}
+            \cs{abbritem}\marg{中文名称}\marg{英文全称}\marg{缩写}\\
+            \cs{abbritem}\oarg{分组}\marg{中文名称}\marg{英文全称}\marg{缩写}
+        \end{syntax}
+        在当前位置输出“中文名称（英文全称，缩写）”，同时登记到缩略语表。可选分组默认为 A。
+    \end{function}
+
+    \begin{function}[added=2026-04-29]{\nomdef}
+        \begin{syntax}
+            \cs{nomdef}\marg{中文术语}\marg{英文术语}
+        \end{syntax}
+        登记双语术语条目，固定写入 N 组“术语表”，不在当前位置输出正文。
+        \begin{texnote}
+            示例：
+            \begin{verbatim}
+\nomdef{深度学习}{Deep Learning}
+            \end{verbatim}
+        \end{texnote}
+    \end{function}
+
+    \begin{function}[added=2026-04-29]{\nomitem}
+        \begin{syntax}
+            \cs{nomitem}\marg{中文术语}\marg{英文术语}\\
+            \cs{nomitem}\oarg{分组}\marg{中文术语}\marg{英文术语}
+        \end{syntax}
+        在当前位置输出“中文术语（英文术语）”，同时登记到术语表。可选分组默认为 N。
+    \end{function}
+
+    \begin{function}[added=2026-04-29]{\termitem}
+        \begin{syntax}
+            \cs{termitem}\marg{中文术语}\marg{解释}\\
+            \cs{termitem}\oarg{分组}\marg{中文术语}\marg{解释}
+        \end{syntax}
+        在当前位置输出“中文术语”，同时登记到术语表。可选分组默认为 N。
+    \end{function}
+
+    \begin{function}[added=2026-04-29]{\symbolitem}
+        \begin{syntax}
+            \cs{symbolitem}\marg{符号}\marg{说明}
+        \end{syntax}
+        登记符号条目，固定写入 S 组“符号表”，不在当前位置输出正文。
+        \begin{texnote}
+            示例：
+            \begin{verbatim}
+\symbolitem{$\alpha$}{学习率，用于控制模型参数每次更新的步长。}
+\symbolitem{$\mathcal{D}$}{训练数据集。}
+            \end{verbatim}
+        \end{texnote}
+    \end{function}
+
+    \begin{function}[added=2026-04-29]{\printnomenclature}
+        \begin{syntax}
+            \cs{printnomenclature}
+        \end{syntax}
+        输出“缩略语、术语、符号对照表”。推荐放在 \cs{tableofcontents} 之后、\cs{mainmatter} 之前。
+        \begin{texnote}
+            使用 \texttt{latexmk} 编译时会自动调用 \texttt{makeindex} 生成对照表；手动编译时需要在 XeLaTeX 之后运行：
+            \begin{verbatim}
+makeindex out/final_thesis.nlo -s nomencl.ist -o out/final_thesis.nls
+            \end{verbatim}
+        \end{texnote}
+    \end{function}
+
     \subsection{宏包环境}
 
     \begin{environment}{abstract}

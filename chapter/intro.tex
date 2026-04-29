@@ -1,19 +1,200 @@
-\chapter{绪论}
-\section{研究背景}
-近年来,深度学习技术,特别是深度神经网络在图像识别领域取得了突破性进展。本节将概述这一领域的发展历程和最新研究动态\cite{krizhevsky2012imagenet,goodfellow2014generative}。
+\chapter{模板使用说明}
 
-\section{研究意义}
-提高图像识别的准确性和效率对于许多实际应用至关重要,如医疗诊断、自动驾驶等。本研究旨在推动这一领域的发展,并探索新的应用方向。
+本示例文件用于展示 \textsf{GZUthesis} 模板的常用功能。实际写作时，通常只需要修改
+\texttt{final\_thesis.tex} 中的论文信息、章节输入、参考文献文件，以及各章节正文内容。
 
+\section{文档类型与基本信息}
 
+模板通过文档类选项控制学位类型、打印版本和字体策略。例如，本示例使用：
+
+\begin{verbatim}
+\documentclass[oneside,degree=master,print=final,windows]{GZUthesis}
+\end{verbatim}
+
+其中，\texttt{degree=master} 表示硕士论文，\texttt{print=final} 表示终稿版本，
+\texttt{windows} 会尝试启用 Windows 常用论文排版字体。论文封面、答辩信息页和 PDF 元数据
+由导言区中的信息命令生成，例如：
+
+\begin{verbatim}
+\gradyear{2021}
+\major{学科专业}
+\research{研究方向}
+\author{学生}
+\supervisor{导师}
+\stuid{(学号)}
+\title{论文中文题目}
+\entitle{English Title}
+\department{培养单位}
+\degreecategory{学术/专业学位}
+\end{verbatim}
+
+\section{答辩信息}
+
+终稿版本会生成答辩委员会名单页。答辩主席、专家、秘书和地点可在导言区设置：
+
+\begin{verbatim}
+\chairman{贵州大学}{张XX}{教授}
+\addexpert{贵州大学}{李XX}{教授}
+\defsec{张三\ 学士}
+\defaddr{兜率宫}
+\end{verbatim}
+
+\section{正文结构}
+
+摘要、目录、正文、致谢、参考文献和附录通常按如下顺序组织：
+
+\begin{verbatim}
+\begin{document}
+    \maketitle
+    \frontmatter
+    \input{chapter/abstract.tex}
+    \tableofcontents
+    \printnomenclature
+
+    \mainmatter
+    \input{chapter/intro.tex}
+    \input{chapter/acknowledgments.tex}
+    \printbibliography[heading=bibliography,title=参考文献]
+    \input{chapter/appendices.tex}
+\end{document}
+\end{verbatim}
+
+\section{缩略语、术语与符号表}
+
+本模板支持集中登记缩略语、术语和符号，并在目录之后通过 \verb|\printnomenclature| 输出。
+本示例已在 \texttt{final\_thesis.tex} 中登记如下条目：
+
+\begin{verbatim}
+\abbrdef{卷积神经网络}{Convolutional Neural Network}{CNN}
+\nomdef{深度学习}{Deep Learning}
+\nomdef{迁移学习}{将一个任务中学到的知识迁移到相关任务中的机器学习方法。}
+\symbolitem{$\alpha$}{学习率，用于控制模型参数每次更新的步长。}
+\end{verbatim}
+
+如果需要在正文中首次出现时同时显示并登记，也可以使用:
+
+\verb|\abbritem{注意力机制}{Attention Mechanism}{AM}|
+。
+此命令会在当前位置输出“中文（英文，缩写）”，并加入缩略语对照表。如：\abbritem{注意力机制}{Attention Mechanism}{AM}
+
+\section{参考文献}
+
+参考文献数据库通常保存在 \texttt{.bib} 文件中，例如本模板中的
+\texttt{reference.bib}。正文中可使用 \verb|\cite| 引用文献，例如 AlexNet 论文和 GAN
+论文 \cite{krizhevsky2012imagenet,goodfellow2014generative}。
+
+常用的参考文献处理方式有两种。第一种是 \texttt{biblatex} 和 \texttt{biber}，在导言区载入
+参考文献数据库：
+
+\begin{verbatim}
+\usepackage[backend=biber,style=gb7714-2015]{biblatex}
+\addbibresource[location=local]{reference.bib}
+\end{verbatim}
+
+文末使用：
+
+\begin{verbatim}
+\printbibliography[heading=bibliography,title=参考文献]
+\end{verbatim}
+
+第二种是传统 \texttt{BibTeX} 方式，在导言区载入国标参考文献宏包：
+
+\begin{verbatim}
+\usepackage{gbt7714}
+\end{verbatim}
+
+文末使用：
+
+\begin{verbatim}
+\bibliographystyle{gbt7714-numerical}
+\bibliography{reference}
+\end{verbatim}
+
+如果参考文献分散在多个 \texttt{.bib} 文件中，可写为：
+
+\begin{verbatim}
+\bibliography{reference,chapter1,chapter2}
+\end{verbatim}
+
+如果文件放在子目录中，可写为：
+
+\begin{verbatim}
+\bibliography{bib/reference}
+\end{verbatim}
+
+两种方式不要在同一个文档中混用，选择其一即可。
+
+\section{编译方式}
+
+推荐使用 \texttt{latexmk} 编译。模板已在 \texttt{.latexmkrc} 中配置 XeLaTeX、Biber 和
+缩略语表的 \texttt{makeindex} 规则：
+
+\begin{verbatim}
+latexmk final_thesis.tex
+\end{verbatim}
+
+如果手动编译，需要依次运行 XeLaTeX、Biber、MakeIndex 和多次 XeLaTeX。
+
+\chapter{排版样式预览}
+
+本章集中展示章节标题、正文、列表、公式、图表和引用等排版效果。
+
+\section{标题层级与正文}
+
+这是一级节标题下的正文示例。模板会处理章标题、节标题、页眉页脚、页码、目录项和中英文
+图表题注等格式。下面使用若干填充段落展示正文排版效果。
+
+\zhlipsum*[1]
+
+\subsection{二级标题}
+
+这是二级标题示例。正文中可混排中文、English text、数学符号 $\alpha$、缩写 CNN 以及引用
+\cite{krizhevsky2012imagenet}。
+
+\subsubsection{三级标题}
+
+这是三级标题示例。模板默认将目录深度设置到二级标题，三级标题主要用于正文内部层级展示。
+
+\section{列表与字体}
+
+有序列表示例：
+
+\begin{enumerate}
+    \item 设置论文基本信息；
+    \item 编写摘要、正文、致谢和附录；
+    \item 使用 \texttt{latexmk} 编译并检查 PDF。
+\end{enumerate}
+
+无序列表和字体示例：
+
+\begin{itemize}
+  \item \textbf{加粗文本：} \textbf{囧、槑、氼、烎、垚、圐圙、嘦、嫑、怹}；
+    \item 宋体文本：囧、槑、氼、烎、垚、圐圙、嘦、嫑、怹；
+    \item 英文与数字：Deep Learning, CNN, GAN, 2026。
+\end{itemize}
+
+\section{公式}
+
+公式编号按“章-序号”生成。示例见公式 \ref{eq:softmax}：
+
+\begin{equation}
+    p_i = \frac{\exp(z_i)}{\sum_{j=1}^{K}\exp(z_j)}
+    \label{eq:softmax}
+\end{equation}
+
+其中，$z_i$ 表示第 $i$ 类的模型输出，$K$ 表示类别数。
+
+\section{表格}
+
+表格内容使用小五号宋体，中英文表题使用小五号并区分编号字体。示例见表 \ref{tab:example}。
 
 \begin{table}[htbp]
     \centering
     \bicaption{示例表格}{Example table}\label{tab:example}
-    \begin{tabular}{|l|p{5cm}|p{5cm}|}
-        \hline
+    \begin{tabular}{lp{5cm}p{5cm}}
+        \toprule
         \textbf{网络类型} & \textbf{主要特点} & \textbf{典型应用} \\
-        \hline
+        \midrule
         卷积神经网络 (CNN) &
         \begin{itemize}
             \item 局部感受野
@@ -25,7 +206,7 @@
             \item 物体检测
             \item 人脸识别
         \end{itemize} \\
-        \hline
+        \addlinespace
         循环神经网络 (RNN) &
         \begin{itemize}
             \item 具有记忆能力
@@ -37,25 +218,20 @@
             \item 语音识别
             \item 时间序列预测
         \end{itemize} \\
-        \hline
-        长短时记忆网络 (LSTM) &
-        \begin{itemize}
-            \item RNN的变体
-            \item 解决长期依赖问题
-            \item 具有门控机制
-        \end{itemize} &
-        \begin{itemize}
-            \item 机器翻译
-            \item 文本生成
-            \item 情感分析
-        \end{itemize} \\
-        \hline
+        \bottomrule
     \end{tabular}
 \end{table}
 
+\section{图片}
 
-\begin{figure}[h]
+图题编号与标题格式由模板统一控制。示例见图 \ref{fig:example}。
 
-    \includegraphics[width=\textwidth]{figures/example.jpg}
-    \bicaption{示例图片}{Example pictures}\label{fig:example}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=.85\textwidth]{figures/example.jpg}
+    \bicaption{示例图片}{Example picture}\label{fig:example}
 \end{figure}
+
+\section{长段落预览}
+
+\zhlipsum[6-8][name=trad]
