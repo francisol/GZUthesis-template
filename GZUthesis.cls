@@ -458,8 +458,8 @@
 
 %% 摘要环境。可选参数 cn 生成中文摘要标题，否则生成英文摘要标题。
 \newenvironment{abstract}[1][cn]{%
+  \setstretch{1.5}%
   \begin{center}
-    \setstretch{1.8}%
     \GZU@font@abstitle
       \ifstrequal{#1}{cn}{%
         \GZU@title
@@ -471,8 +471,6 @@
     \ifstrequal{#1}{cn}{摘要}{ABSTRACT}%
   }%
   \par
-  \vspace{14pt}%
-  \setstretch{1.5}%
   \GZU@font@abscontent
   \noindent
   \ifstrequal{#1}{cn}{摘要：}{Abstract:}%
@@ -694,7 +692,7 @@
 
 	~\vskip 60pt
 
-\noindent\centering{\GZU@font@defense@topic \GZU@defense@topic}
+  \noindent\centerline{\GZU@font@defense@topic\GZU@defense@topic}
 
 	\vspace{55pt}
 	\noindent
