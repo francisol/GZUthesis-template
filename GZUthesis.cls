@@ -2,14 +2,14 @@
 % GZUthesis.cls
 % 贵州大学学位论文模板
 % 
-% Copyright (c) 2023-2025  https://github.com/francisol
+% Copyright (c) 2023-2026  https://github.com/francisol
 % 
 % 传播请注明来源，尊重作者劳动
 % ----------------------------------------------------------------
 
-% 文档类声明与基础依赖
+%%%%%%%%%%%%%%%%%%%%%%%% 类声明与基础依赖 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesClass{GZUthesis}[2026/04/22 v2.0.0 Guizhou University Thesis Template]
+\ProvidesClass{GZUthesis}[2026/05/02 v2.0.0 Guizhou University Thesis Template]
 \LoadClass[cs4size,a4paper,fancyhdr,fntef,oneside]{book}
 \RequirePackage{xkeyval}
 \RequirePackage{ifthen}
@@ -17,12 +17,15 @@
 \RequirePackage[intoc]{nomencl}
 \RequirePackage{pgfkeys}
 
-\def\GZU@university{贵州大学}
-\def\GZU@review@topic{} % 盲审主题
-\def\GZU@final@topic{} % 终稿主题
-\def\GZU@defense@topic{士学位论文答辩委员会名单} % 答辩信息主题
+%%%%%%%%%%%%%%%%%%%%%%%% 内部变量与常量 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 模板固定信息。
+\def\GZU@university{贵州大学} % 学校名称
+\def\GZU@review@topic{} % 盲审封面主题
+\def\GZU@final@topic{} % 终稿封面主题
+\def\GZU@defense@topic{士学位论文答辩委员会名单} % 答辩信息页标题后缀
+\def\GZU@schoolno{10657}
 
-%% 保存选项、命令设置的参数信息
+%% 保存选项和用户命令写入的论文信息。
 \def\GZU@option@print{draft} % 打印类型
 \def\GZU@option@degree{doctor} % 学位类型
 \def\GZU@paperno{} % 论文号
@@ -48,26 +51,40 @@
 \def\GZU@classifyno{} % 中图分类号
 \def\GZU@udcno{} % UDC 分类号
 
-%% 根据其他信息生成的变量
+%% 根据其他信息生成或排版时复用的变量。
 \def\GZU@date@year{ \the\year}
 \def\GZU@date@month{ \the\month}
 \def\GZU@titlewidth{14cm} % 题目宽度
 \def\GZU@titleheight{7cm} % 题目区域高度
 
+%% 答辩委员会名单排版用长度。
 \newlength{\GZU@committee@unitwidth}
 \newlength{\GZU@committee@namewidth}
 \newlength{\GZU@committee@titlewidth}
 
-\def\GZU@fontname@song{}
-\def\GZU@fontname@kai{}
-\def\GZU@fontname@hei{}
-\def\GZU@fontname@fsong{}
+%% 封面下划线长度计算用长度与盒子。
+\newlength{\GZU@covermincontentlen}
+\newlength{\GZU@covercontentpadding}
+\setlength{\GZU@covermincontentlen}{4cm}
+\setlength{\GZU@covercontentpadding}{0.2cm}
+
+\newsavebox{\GZU@reviewmajorbox}
+\newsavebox{\GZU@reviewresearchbox}
+\newlength{\GZU@reviewmaxcontentlen}
+
+\newsavebox{\GZU@finalmajorbox}
+\newsavebox{\GZU@finalresearchbox}
+\newsavebox{\GZU@finalsupervisorbox}
+\newsavebox{\GZU@finalauthorbox}
+\newlength{\GZU@finalmaxcontentlen}
+
+%% 将中文日期拆为年月，供封面显示。
 \def\parsedate#1年#2月#3\endparse{%
 	\def\GZU@date@year{#1}
 	\def\GZU@date@month{#2}
 }
 
-%% 常量
+%% 封面、答辩页和目录中使用的固定文本。
 \def\GZU@table@major{学科专业}
 \def\GZU@table@research{研究方向}
 \def\GZU@table@supervisor{导 \hfill 师\hfill 姓\hfill 名\hfill 、\hfill 职\hfill 称}
@@ -83,11 +100,17 @@
 \def\GZU@defense@secretary{答辩秘书}
 \def\GZU@defense@date{答辩日期}
 \def\GZU@defense@address{答辩地点}
-\def\GZU@addrsep{ {\zihao{-1}{·} }}
+
+\def\GZU@addrsep{%
+  \hspace{0.4em}%
+  \raisebox{0.4ex}{\rule{0.26em}{0.26em}}%
+  \hspace{0.4em}%
+}
 \def\GZU@tablesep{：}
 \def\GZU@address{中国\GZU@addrsep 贵州\GZU@addrsep 贵阳} % 地址不修改
-\def\GZU@schoolno{10657}
-%% 状态开关
+
+%%%%%%%%%%%%%%%%%%%%%%%% 状态开关与文档选项 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 论文类型、打印类型和可选功能开关。
 \newif\ifdoctor
 \newif\ifmaster
 \newif\ifbachelor
@@ -107,8 +130,7 @@
 \checkhwxkfalse
 \enablewatermarkfalse
 
-%%% 文档选项 %%%
-% 学位类型：博士、硕士、本科
+%% 学位类型：博士、硕士、本科。
 \define@choicekey*+{GZUthesis}{degree}[\val\position]{doctor,master,bachelor}[doctor]{%
 	\ifcase\position\relax
 		\doctortrue
@@ -129,7 +151,7 @@
 	}{%
 		\ClassError{GZUthesis}{degree error: #1}{Select one of doctor, master, bachelor.}
 	}
-% 打印类型：草稿、盲审、终稿
+%% 打印类型：草稿、盲审、终稿。
 \define@choicekey*+{GZUthesis}{print}[\val\position]{draft,review,final}[draft]{%
 	\global\def\GZU@option@print{#1}
 	\ifcase\position\relax
@@ -148,17 +170,17 @@
 	}{%
 		\ClassError{GZUthesis}{print error: #1}{Select one of draft, review, final.}
 	}
-% windows 同时启用 Windows 中文字体、Times/Arial 与华文行楷检查。
+%% windows 同时启用 Windows 中文字体、Times/Arial 与华文行楷检查。
 \DeclareOption{windows}{\fullfonttrue\checktnratrue\checkhwxktrue}
 \DeclareOption{tnra}{\checktnratrue}
 \DeclareOption{hwxk}{\checkhwxktrue}
 \DeclareOption{watermark}{\enablewatermarktrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptionsX<GZUthesis>\relax
+
+%%%%%%%%%%%%%%%%%%%%%%%% 第三方宏包 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{fontspec}
 \RequirePackage[UTF8,zihao=5,heading=true]{ctex}
-
-% 第三方宏包
 \RequirePackage[titles]{tocloft}
 \RequirePackage{geometry}
 \RequirePackage{hyperref}
@@ -234,7 +256,55 @@
 \newcommand{\udcno}[1]{\global\def\GZU@udcno{#1}}
 \newcommand{\degreecategory}[1]{\global\def\GZU@degreecategory{#1}}
 
-%%%%%%%%%%%%%%%%%%%%%%%% 字体处理 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% 字体族加载与字体样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 强制取消黑体加粗
+\ExplSyntaxOn
+
+\cs_new_protected:Npn \GZU_disable_zhhei_bold:
+  {
+    % 读取当前 zhhei 的主字体名
+    \prop_get:NnNTF \g__xeCJK_family_font_name_prop { zhhei } \l_tmpa_tl
+      {
+        % 读取当前 zhhei 的原始字体选项
+        \prop_get:NnNF \g__xeCJK_family_font_options_prop { zhhei } \l_tmpb_tl
+          { \tl_clear:N \l_tmpb_tl }
+
+        % 如果原来已有选项，先补一个逗号
+        \tl_if_blank:VF \l_tmpb_tl
+          { \tl_put_right:Nn \l_tmpb_tl { , } }
+
+        % 追加设置：关闭伪粗体，并让 BoldFont 指回当前黑体本身
+        \tl_put_right:Ne \l_tmpb_tl
+          {
+            AutoFakeBold = false ,
+            BoldFont = { \exp_not:V \l_tmpa_tl }
+          }
+
+        % 用当前字体名和修改后的选项重新定义 zhhei
+        \use:e
+          {
+            \exp_not:N \setCJKfamilyfont { zhhei }
+              [ \exp_not:V \l_tmpb_tl ]
+              { \exp_not:V \l_tmpa_tl }
+          }
+      }
+      {
+        \PackageWarning{GZU}{CJK family `zhhei' is not defined}
+      }
+  }
+
+\AtBeginDocument{\GZU_disable_zhhei_bold:}
+
+\ExplSyntaxOff
+
+%% Windows 中文字体文件名缓存。
+\def\GZU@fontname@song{}
+\def\GZU@fontname@kai{}
+\def\GZU@fontname@hei{}
+\def\GZU@fontname@fsong{}
+
 %% 主题字体默认楷体；启用华文行楷后会重定义。
 \newcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{zhkai}}
 %% 终稿学校名称字体默认楷体；启用华文行楷后会重定义。
@@ -242,7 +312,7 @@
 
 %% 注册华文行楷字体族。加粗使用伪粗，避免查找不存在或不兼容的粗体文件。
 \newcommand{\GZU@sethwxkfont}[1]{%
-	\setCJKfamilyfont{hwxk}[AutoFakeBold=2.5]{#1}%
+	\setCJKfamilyfont{hwxk}{#1}%
 	\renewcommand{\GZU@font@review@topic}{\zihao{-0} \CJKfamily+{hwxk}}%
 	\renewcommand{\GZU@font@final@university}{\bfseries\fontsize{29bp}{35bp}\selectfont \CJKfamily+{hwxk}\ziju{0.2}}%
 }
@@ -273,70 +343,121 @@
 	}{}%
 }
 
-%% 检查并启用 Windows 常用中文字体。
-\newcommand{\GZU@usewindowsfont}{%
-	\IfFontExistsTF{SimSun}{
-		\global\def\GZU@fontname@song{SimSun}
-	}{
-		\IfFontExistsTF{simsun.ttc}{
-			\global\def\GZU@fontname@song{simsun.ttc}
-		}{
-			\fullfontfalse
-		}
-	}
-	\IfFontExistsTF{FangSong}{
-		\global\def\GZU@fontname@fsong{FangSong}
-	}{
+%% 读取 ctex/xeCJK 已定义的 CJK 字体族，作为 Windows 字体缺失时的后备。
+\ExplSyntaxOn
+\cs_new_protected:Npn \GZU_save_cjk_family_font:Nn #1#2
+  {
+    \prop_get:NnNTF \g__xeCJK_family_font_name_prop {#2} \l_tmpa_tl
+      {
+        \cs_gset:Npx #1 { \exp_not:V \l_tmpa_tl }
+      }
+      {
+        \ClassWarning{GZUthesis}{CJK family `#2' is not defined}
+      }
+  }
+\cs_new_eq:NN \GZU@savefamilyfont \GZU_save_cjk_family_font:Nn
+\ExplSyntaxOff
 
-		\IfFontExistsTF{simfang.ttf}{
-			\global\def\GZU@fontname@fsong{simfang.ttf}
-		}{
-			\fullfontfalse
-		}
-	}
-
-	\IfFontExistsTF{SimHei}{
-		\global\def\GZU@fontname@hei{SimHei}
-	}{
-
-		\IfFontExistsTF{simhei.ttf}{
-			\global\def\GZU@fontname@hei{simhei.ttf}
-		}{
-
-			\fullfontfalse
-		}
-	}
-
-	\IfFontExistsTF{KaiTi}{
-		\global\def\GZU@fontname@kai{KaiTi}
-	}{
-		\IfFontExistsTF{simkai.ttf}{
-			\global\def\GZU@fontname@kai{simkai.ttf}
-		}{
-
-			\fullfontfalse
-		}
-	}
-	\iffullfont
-		\setCJKmainfont[AutoFakeBold=2.5,ItalicFont=\GZU@fontname@kai]{\GZU@fontname@song}
-		\setCJKmonofont{\GZU@fontname@fsong}
-		\setCJKfamilyfont{zhsong}[AutoFakeBold=2.5,ItalicFont=\GZU@fontname@kai]{\GZU@fontname@song}
-		\setCJKfamilyfont{zhhei}{\GZU@fontname@hei}
-		\setCJKfamilyfont{zhfs}{\GZU@fontname@fsong}
-		\setCJKfamilyfont{zhkai}{\GZU@fontname@kai}
-	\fi
+%% 查找系统字体名或文件名；第 4 参数可传 CJK family 名称作为后备。
+\newcommand{\GZU@findfont}[4]{%
+	\IfFontExistsTF{#2}{%
+		\global\def#1{#2}%
+	}{%
+		\IfFontExistsTF{#3}{%
+			\global\def#1{#3}%
+		}{%
+			\if\relax\detokenize{#4}\relax
+			\else
+				\GZU@savefamilyfont#1{#4}%
+			\fi
+		}%
+	}%
 }
 
-\iffullfont\GZU@usewindowsfont\fi
+%% 检查并启用 Windows 常用中文字体；缺失的字体族保持 ctex 默认设置。
+\newcommand{\GZU@usewindowsfont}{%
+	\GZU@findfont{\GZU@fontname@song}{SimSun}{simsun.ttc}{zhsong}%
+	\GZU@findfont{\GZU@fontname@fsong}{FangSong}{simfang.ttf}{zhfs}%
+	\GZU@findfont{\GZU@fontname@hei}{SimHei}{simhei.ttf}{zhhei}%
+	\GZU@findfont{\GZU@fontname@kai}{KaiTi}{simkai.ttf}{zhkai}%
+  
+	\setCJKmainfont[AutoFakeBold,ItalicFont={\GZU@fontname@kai},BoldItalicFont={\GZU@fontname@kai},BoldItalicFeatures={FakeBold}]{\GZU@fontname@song}%
+  \setCJKsansfont[AutoFakeBold]{\GZU@fontname@hei}%
+  \setCJKmonofont[AutoFakeBold]{\GZU@fontname@fsong}%
+	\setCJKfamilyfont{zhsong}[AutoFakeBold,ItalicFont={\GZU@fontname@kai},BoldItalicFont={\GZU@fontname@kai},BoldItalicFeatures={FakeBold}]{\GZU@fontname@song}%
+	\setCJKfamilyfont{zhhei}{\GZU@fontname@hei}%
+	\setCJKfamilyfont{zhfs}{\GZU@fontname@fsong}%
+  \setCJKfamilyfont{zhkai}[AutoFakeBold]{\GZU@fontname@kai}%
+
+}
+
+\ifwindows\GZU@hwxkcheck\GZU@tnracheck\else\iffullfont
+		\GZU@usewindowsfont
+	\fi\fi
 \ifchecktnra\GZU@tnracheck\fi
 \ifcheckhwxk\GZU@hwxkcheck\fi
 
+%% 盲审题目字体：一号黑体
+\newcommand{\GZU@font@review@title}{\zihao{1} \sffamily}
+%% 盲审地址字体：黑体四号
+\newcommand{\GZU@font@review@address}{ \sffamily \zihao{4} }
+%% 盲审日期字体：黑体四号
+\newcommand{\GZU@font@review@date}{ \sffamily \zihao{4}}
+
+%% 终稿封面顶部信息字体：宋体五号
+\newcommand{\GZU@font@final@faceno}{\rmfamily \zihao{5}}
+\newcommand{\GZU@font@final@classfyno}{\GZU@font@final@faceno}
+\newcommand{\GZU@font@final@udcno}{\GZU@font@final@faceno}
+\newcommand{\GZU@font@final@paperno}{\GZU@font@final@faceno}
+\newcommand{\GZU@font@final@seclvl}{\GZU@font@final@faceno}
+%% 终稿标题字体：20bp
+\newcommand{\GZU@font@final@title}{\fontsize{20bp}{24bp}\selectfont }
+%% 终稿地址字体：黑体 14bp
+\newcommand{\GZU@font@final@address}{\sffamily \fontsize{14bp}{17bp}\selectfont  }
+%% 终稿日期字体：黑体 14bp
+\newcommand{\GZU@font@final@date}{\sffamily \fontsize{14bp}{17bp}\selectfont }
+
+%% 终稿论文类型字体：宋体伪粗 20bp
+\newcommand{\GZU@font@final@topic}{\rmfamily \bfseries\fontsize{20bp}{24bp}\selectfont \addfontfeatures{LetterSpace=10}\ziju{0.5} }
+\newcommand{\GZU@font@final@degreecategory}{
+  \rmfamily \bfseries\fontsize{16.5bp}{20bp} \selectfont%
+}
+
+%% 终稿封面表格字体：宋体 14bp
+\newcommand{\GZU@font@final@table}{ \rmfamily \fontsize{14bp}{17bp}\selectfont }
+
+%% 摘要标题字体：黑体/无衬线 小二
+\newcommand{\GZU@font@abstitle}{\zihao{-2} \sffamily}
+%% 盲审封面表格字体：三号黑体
+\newcommand{\GZU@font@review@table}{ \sffamily \zihao{3} }
+%% 摘要内容字体：宋体四号
+\newcommand{\GZU@font@abscontent}{\rmfamily \zihao{4}}
+%% 关键词标题字体：宋体四号加粗
+\newcommand{\GZU@font@keywstitle}{\rmfamily  \zihao{4}}
+%% 关键词正文字体：宋体四号
+\newcommand{\GZU@font@keywscontent}{\rmfamily \zihao{4}}
+
+%% 答辩信息页字体
+\newcommand{\GZU@font@defense@topic}{\sffamily \zihao{2}}
+\newcommand{\GZU@font@defense@title}{\sffamily \zihao{-2}}
+\newcommand{\GZU@font@defense@main}{\rmfamily \fontsize{14bp}{17bp}\selectfont}
+
+%% 致谢、图表与参考文字体。
+\newcommand{\GZU@font@acknowledgments@title}{\zihao{5}\sffamily}
+\newcommand{\acknowledgmentscontentfont}{\itshape}
+\newcommand{\GZU@font@smallfivesong}{\zihao{-5}\rmfamily}
+\newcommand{\GZU@font@smallfivehei}{\zihao{-5}\sffamily}
+\newcommand{\GZU@font@bibliography@title}{\zihao{-4}\sffamily}
+\newcommand{\GZU@font@bibliography@content}{\zihao{-5}\rmfamily}
+
+%%%%%%%%%%%%%%%%%%%%%%%% 可选功能控制 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 空白页水印：仅在启用 watermark 选项后改写 \cleardoublepage。
 \ifenablewatermark
 	\RequirePackage[final]{draftwatermark}
 	\RequirePackage{xcolor}
 	\RequirePackage{graphicx}
 
-	% 空白页水印控制参数。
+	%% 空白页水印控制参数。
 	\newcommand{\GZU@blankpagespace}{1.5em}
 	\newcommand{\GZU@blankpagetext}{%
 		此\hspace{\GZU@blankpagespace}%
@@ -349,7 +470,7 @@
 	\newcommand{\GZU@blankpageangle}{45}
 	\definecolor{GZU@blankpagewmcolor}{gray}{0.85}
 
-	% shipout/background 的坐标原点在页面左上角，适合放背景内容。
+	%% shipout/background 的坐标原点在页面左上角，适合放背景内容。
 	\newcommand{\GZU@blankpagewatermark}{%
 		\put(0,0){%
 			\parbox[t][\paperheight]{\paperwidth}{%
@@ -366,14 +487,14 @@
 		}%
 	}
 
-	% 双面打印补空白页时添加“此页无正文”水印。
+	%% 双面打印补空白页时添加“此页无正文”水印。
 	\renewcommand{\cleardoublepage}{%
 		\clearpage
 		\if@twoside
 			\ifodd\c@page
-				% 无需补空白页
+				% 无需补空白页。
 			\else
-				% 需要补空白页：仅这一页加背景水印
+				% 需要补空白页：仅这一页加背景水印。
 				\thispagestyle{empty}%
 				\AddToHookNext{shipout/background}{\GZU@blankpagewatermark}%
 				\hbox{}%
@@ -388,7 +509,7 @@
 		\fi
 	}
 
-	% 单面模式下不会产生双面补空白页，给出提醒。
+	%% 单面模式下不会产生双面补空白页，给出提醒。
 	\AtBeginDocument{%
 		\if@twoside\else
 			\ClassWarning{GZUthesis}{%
@@ -399,51 +520,7 @@
 	}
 \fi
 
-%%%%%%%%%%%%%%%%%%%%%%%% 字体样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% 盲审题目字体：一号黑体
-\newcommand{\GZU@font@review@title}{\zihao{1} \CJKfamily+{zhhei}}
-%% 盲审地址字体：黑体四号
-\newcommand{\GZU@font@review@address}{ \CJKfamily+{zhhei} \zihao{4} }
-%% 盲审日期字体：黑体四号
-\newcommand{\GZU@font@review@date}{ \CJKfamily+{zhhei} \zihao{4}}
 
-%% 终稿封面顶部信息字体：宋体五号
-\newcommand{\GZU@font@final@faceno}{\songti \zihao{5}}
-\newcommand{\GZU@font@final@classfyno}{\GZU@font@final@faceno}
-\newcommand{\GZU@font@final@udcno}{\GZU@font@final@faceno}
-\newcommand{\GZU@font@final@paperno}{\GZU@font@final@faceno}
-\newcommand{\GZU@font@final@seclvl}{\GZU@font@final@faceno}
-%% 终稿标题字体：20bp
-\newcommand{\GZU@font@final@title}{\fontsize{20bp}{24bp}\selectfont }
-%% 终稿地址字体：黑体 14bp
-\newcommand{\GZU@font@final@address}{\heiti \fontsize{14bp}{17bp}\selectfont  }
-%% 终稿日期字体：黑体 14bp
-\newcommand{\GZU@font@final@date}{\heiti \fontsize{14bp}{17bp}\selectfont }
-
-%% 终稿论文类型字体：宋体伪粗 20bp
-\newcommand{\GZU@font@final@topic}{\CJKfamily{zhsong}\bfseries\fontsize{20bp}{24bp}\selectfont \addfontfeatures{LetterSpace=10}\ziju{0.5} }
-\newcommand{\GZU@font@final@degreecategory}{
-  \CJKfamily{zhsong}\bfseries\fontsize{16.5bp}{20bp} \selectfont%
-}
-
-%% 终稿封面表格字体：宋体 14bp
-\newcommand{\GZU@font@final@table}{ \CJKfamily+{zhsong}\fontsize{14bp}{17bp}\selectfont }
-
-%% 摘要标题字体：黑体/无衬线 小二
-\newcommand{\GZU@font@abstitle}{\zihao{-2}\heiti \sffamily}
-%% 盲审封面表格字体：三号黑体
-\newcommand{\GZU@font@review@table}{ \CJKfamily+{zhhei} \zihao{3} }
-%% 摘要内容字体：宋体四号
-\newcommand{\GZU@font@abscontent}{\songti \zihao{4}}
-%% 关键词标题字体：宋体四号加粗
-\newcommand{\GZU@font@keywstitle}{\songti  \zihao{4}}
-%% 关键词正文字体：宋体四号
-\newcommand{\GZU@font@keywscontent}{\songti \zihao{4}}
-
-%% 答辩信息页字体
-\newcommand{\GZU@font@defense@topic}{\heiti\zihao{2}}
-\newcommand{\GZU@font@defense@title}{\heiti \zihao{-2}}
-\newcommand{\GZU@font@defense@main}{\CJKfamily+{zhsong} \fontsize{14bp}{17bp}\selectfont}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%% 文档结构命令 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -507,20 +584,6 @@
 	\fi
 }
 
-\newlength{\GZU@covermincontentlen}
-\newlength{\GZU@covercontentpadding}
-\setlength{\GZU@covermincontentlen}{4cm}
-\setlength{\GZU@covercontentpadding}{0.2cm}
-
-\newsavebox{\GZU@reviewmajorbox}
-\newsavebox{\GZU@reviewresearchbox}
-\newlength{\GZU@reviewmaxcontentlen}
-
-\newsavebox{\GZU@finalmajorbox}
-\newsavebox{\GZU@finalresearchbox}
-\newsavebox{\GZU@finalsupervisorbox}
-\newsavebox{\GZU@finalauthorbox}
-\newlength{\GZU@finalmaxcontentlen}
 %% 根据论文类型设置封面主题并制作题名页。
 \newcommand\GZU@mktitle{%
 	\ifdoctor
@@ -810,26 +873,19 @@
 	\appendix\addappheadtotoc
 }{}
 %% 定义致谢章节。
-\newcommand{\GZU@font@acknowledgments@title}{\zihao{5}\heiti}
-\newcommand{\acknowledgmentscontentfont}{\zihao{5}\kaishu}
-\newenvironment{acknowledgmentscontent}{%
-	\par\acknowledgmentscontentfont
-}{%
-	\par
-}
-\newcommand{\acknowledgments}[1][致谢]{%
+\newenvironment{acknowledgments}[1][致谢]{%
 	\clearpage{}
 	{\centerline{\GZU@font@acknowledgments@title #1}}
 	\vskip 8pt
 	\addcontentsline{toc}{chapter}{#1}
 	\markboth{#1}{#1}
+
+	\par\acknowledgmentscontentfont
+}{%
+	\par
 }
 
-%% 图表、参考文献与表格正文字体。
-\newcommand{\GZU@font@smallfivesong}{\zihao{-5}\songti}
-\newcommand{\GZU@font@smallfivehei}{\zihao{-5}\heiti}
-\newcommand{\GZU@font@bibliography@title}{\zihao{-4}\heiti}
-\newcommand{\GZU@font@bibliography@content}{\zihao{-5}\songti}
+%% 图表、参考文献与表格正文字体绑定。
 \DeclareCaptionFont{GZU@captionfont}{\GZU@font@smallfivesong}
 \DeclareCaptionFont{GZU@captionlabelfont}{\GZU@font@smallfivehei}
 \AtBeginEnvironment{table}{\GZU@intabletrue}
@@ -879,7 +935,7 @@
 %% 自定义 ctex 章节样式。
 \ctexset{
 	chapter={
-		format=\large\centering\heiti\bfseries,
+		format=\large\centering\sffamily,
 		fixskip=true,
 		beforeskip=0pt,
 		afterskip=20pt,
@@ -888,19 +944,19 @@
 		fixskip=true,
 		beforeskip=16pt,
 		afterskip=16pt,
-		format=\normalsize\heiti\bfseries,
+		format=\normalsize\sffamily,
 	},
 	subsection={
 		fixskip=true,
 		beforeskip=12pt,
 		afterskip=12pt,
-		format=\normalsize\heiti\bfseries,
+		format=\normalsize\sffamily,
 	},
   subsubsection={
 		fixskip=true,
 		beforeskip=12pt,
 		afterskip=12pt,
-		format=\normalsize\heiti\bfseries,
+		format=\normalsize\sffamily,
 	},
 	bibname=\centering{参考文献}
 }
@@ -988,7 +1044,7 @@
 	\nomenclature[S]{\protect\parbox[t]{0.1\textwidth}{#1}}{\hspace{20pt}\protect\parbox[t]{0.66\textwidth}{#2}}%
 }
 \renewcommand\nomgroup[1]{%
-	\item[\heiti\normalsize\pgfkeysvalueof{/nomgroups/#1}]%
+	\item[\sffamily\normalsize\pgfkeysvalueof{/nomgroups/#1}]%
 }
 \let\GZU@orig@thenomenclature\thenomenclature
 \let\GZU@orig@endthenomenclature\endthenomenclature

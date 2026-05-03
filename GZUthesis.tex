@@ -85,10 +85,10 @@
     参考文献样式未在宏包中限制，但在样例文件中给出国标格式。
 
     \section{已知问题}
-    由于平台字体限制，除windows 平台外，其他平台不能按照模板规范显示，例如 linux系统默认使用的不是Sim*字体，部分扩展区文字可能显示乱码。若系统中有对应字体，请使用包选项 \textbf{windows} 启用 Windows 字体模式；该选项会自动尝试启用 \texttt{Times New Roman}, \texttt{Arial}, \texttt{华文行楷}等字体。
-    若只想单独启用\texttt{Times New Roman}, \texttt{Arial} 字体，请使用包选项 \textbf{tnra}。
+    默认中文字体由 \textbf{ctex} 选择。Windows 系统通常不需要开启 \textbf{windows} 选项；该选项主要用于在非 Windows 系统上显式使用已安装的 Windows 常用中文字体，或希望固定使用 \texttt{SimSun}/\texttt{FangSong}/\texttt{SimHei}/\texttt{KaiTi} 等字体时。
+    若只想单独启用 \texttt{Times New Roman}, \texttt{Arial} 字体，请使用包选项 \textbf{tnra}。
 
-    中文字体由 \textbf{ctex}提供，模板并未修改。
+    启用 \textbf{windows} 选项后，模板会先查找系统字体名和当前目录字体文件；若仍未找到，会读取 \textbf{ctex}/\textbf{xeCJK} 已定义的默认字体族作为兜底。因此即使系统缺少某个 Windows 字体，也会保留可用的系统默认字体。
 
     盲审版首页 \textbf{XX 届X士研究生学位论文} 字样为华文行楷（STXINGKA）。使用包选项 \textbf{windows} 时会自动尝试启用华文行楷；若只想单独启用该字体，可使用包选项 \textbf{hwxk}。
 
@@ -122,13 +122,14 @@
         \begin{syntax}
             windows
         \end{syntax}
-        若使用windows参数，则尝试在系统或者文档当前目录下搜索 Windows 常用论文排版字体并使用，同时自动启用 \textbf{hwxk} 与 \textbf{tnra} 字体检查。
+        若使用 windows 参数，则尝试在系统或者文档当前目录下搜索 Windows 常用论文排版字体并使用，同时自动启用 \textbf{hwxk} 与 \textbf{tnra} 字体检查。Windows 系统通常不需要开启该选项，因为 \textbf{ctex} 会自动选择系统中文字体；该选项更适合非 Windows 系统显式启用已安装的 Windows 字体。
         \begin{description}
-            \item[宋体] 搜索系统字体 \texttt{SimSun} 或者当前目录下 \texttt{simsun.ttc}
-            \item[仿宋] 搜索系统字体 \texttt{FangSong} 或者当前目录下 \texttt{simfang.ttf}
-            \item[黑体] 搜索系统字体 \texttt{SimHei} 或者当前目录下 \texttt{simhei.ttf}
-            \item[楷体] 搜索系统字体 \texttt{KaiTi} 或者当前目录下 \texttt{simkai.ttf}
+            \item[宋体] 搜索系统字体 \texttt{SimSun} 或者当前目录下 \texttt{simsun.ttc}；找不到时读取默认 \texttt{zhsong}
+            \item[仿宋] 搜索系统字体 \texttt{FangSong} 或者当前目录下 \texttt{simfang.ttf}；找不到时读取默认 \texttt{zhfs}
+            \item[黑体] 搜索系统字体 \texttt{SimHei} 或者当前目录下 \texttt{simhei.ttf}；找不到时读取默认 \texttt{zhhei}
+            \item[楷体] 搜索系统字体 \texttt{KaiTi} 或者当前目录下 \texttt{simkai.ttf}；找不到时读取默认 \texttt{zhkai}
          \end{description}
+         宋体族设置 \texttt{AutoFakeBold=2.5}，并将 \texttt{ItalicFont} 指向找到或兜底得到的楷体，因此中文 \cs{itshape} 会显示为楷体。
     \end{function}
 
     \begin{function}[added=2025-01-02]{hwxk}

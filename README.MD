@@ -11,7 +11,7 @@
 ### 更新历史
 - **2.0.0** (2026-04-22) 按新版研究生学位论文写作格式通知调整
     - 根据贵州大学研究生院 2026 年 3 月 9 日发布的新版研究生学位论文写作格式通知调整
-    - `windows` 参数自动启用华文行楷、Times New Roman 和 Arial 字体检查
+    - `windows` 参数显式启用 Windows 常用中文字体、华文行楷、Times New Roman 和 Arial 字体检查
 
 - **1.1.4** (2026-04-22) 调整论文模板排版与校徽资源，添加盲审回复模版
 
@@ -42,6 +42,11 @@
     - 目录
 ### 使用
 请参看 GZUthesis.tex 文件
+
+### 字体说明
+模板默认由 `ctex` 选择中文字体。Windows 系统通常不需要开启 `windows` 选项；只有在非 Windows 系统已经安装 Windows 常用字体，或希望显式指定 SimSun/FangSong/SimHei/KaiTi 等字体时，才需要使用 `windows` 选项。
+
+启用 `windows` 选项后，模板会依次查找系统字体名和当前目录字体文件：宋体 `SimSun`/`simsun.ttc`、仿宋 `FangSong`/`simfang.ttf`、黑体 `SimHei`/`simhei.ttf`、楷体 `KaiTi`/`simkai.ttf`。若仍未找到，则读取 `ctex/xeCJK` 已定义的默认字体族作为兜底：`zhsong`、`zhfs`、`zhhei`、`zhkai`。宋体族的中文斜体会使用楷体作为 `ItalicFont`，中文加粗使用伪粗。
 
 ### 编译
 编译 说明文档
