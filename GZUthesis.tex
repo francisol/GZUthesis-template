@@ -42,6 +42,13 @@
       \item[2.0.0] (2026-04-22) 根据贵州大学研究生院 2026 年 3 月 9 日发布的
       \href{https://gs.gzu.edu.cn/2026/0309/c11824a265403/page.htm}{《关于规范贵州大学研究生学位论文写作格式的通知》}
       调整新版论文格式与字体策略
+      \item[2.1.0] (2026-07-22) 承诺书自动排版与答辩委员会名单单独打印
+      \begin{itemize}
+          \item 新增 \texttt{metadata.tex} 集中管理论文元数据，主论文与答辩委员会名单入口共用
+          \item 终稿封面后自动生成承诺书，支持签名图片叠加、日期与保密/不保密勾选
+          \item 新增 \texttt{defense\_committee.tex} 入口与 \cs{makedefensepage}，可单独打印答辩委员会名单
+          \item 新增 \cs{defensepdf}，支持直接插入已签字的答辩委员会名单扫描件
+      \end{itemize}
         
     \end{itemize}
 
@@ -71,12 +78,13 @@
         \item[setspace] 设置行间距
         \item[titletoc] 设置目录
         \item[fancyhdr] 页面布局，实现页眉页脚
-        \item[pdfpages] 插入pdf文件，实现插入承诺书
+        \item[pdfpages] 插入 PDF 文件，实现插入已签字答辩委员会名单
         \item[ulem] 用于实现下划线样式
         \item[bicaption] 用于实现中英图表说明
         \item[draftwatermark] 开启空白页水印时启用
         \item[xcolor] 开启空白页水印时启用
-        \item[graphicx] 开启空白页水印时启用
+        \item[graphicx] 插入图片、承诺书底图和签名图片
+        \item[tikz] 在承诺书底图上叠加签名、日期和保密勾选
     \end{description}
 
     \subsection{内置样式}
@@ -97,6 +105,181 @@
 
 
     \section{使用}
+    \subsection{推荐文件组织}
+
+    模板仓库提供了多个入口文件。一般只需要修改 \texttt{metadata.tex} 和各章节文件，不建议把论文元数据散落在多个入口中。
+
+    \begin{description}
+        \item[\texttt{metadata.tex}] 论文元数据文件，集中填写题名、作者、专业、导师、答辩委员会、承诺书日期和签名图片等信息。主论文和单独答辩委员会名单入口都会读取它。
+        \item[\texttt{final\_thesis.tex}] 主论文入口。默认读取 \texttt{metadata.tex}，再生成封面、前置部分、正文、参考文献和附录。
+        \item[\texttt{defense\_committee.tex}] 答辩委员会名单单独打印入口。它读取同一份 \texttt{metadata.tex}，只输出答辩委员会名单页。
+        \item[\texttt{chapter/}] 章节文件目录。摘要、绪论、致谢和附录示例均放在这里。
+        \item[\texttt{reference.bib}] 参考文献数据库。
+        \item[\texttt{logo/}] 校徽、承诺书底图等模板资源目录。签名图片也可以放在这里。
+        \item[\texttt{out/}] 编译输出目录，由 \texttt{latexmk} 自动生成。
+    \end{description}
+
+    推荐的修改顺序如下：
+    \begin{enumerate}
+        \item 修改 \texttt{metadata.tex} 中的论文题名、作者、专业、导师和答辩委员会信息。
+        \item 在 \texttt{chapter/abstract.tex}、\texttt{chapter/intro.tex} 等章节文件中写正文。
+        \item 在 \texttt{reference.bib} 中维护参考文献。
+        \item 用 \texttt{latexmk} 编译主论文；若只需要打印答辩委员会名单，则用 \texttt{latexmk defense\_committee.tex}。
+    \end{enumerate}
+
+    \subsection{编译方式}
+
+    本模板使用 XeLaTeX 编译，推荐直接运行：
+    \begin{verbatim}
+latexmk
+    \end{verbatim}
+    该命令会读取 \texttt{.latexmkrc}，默认编译 \texttt{final\_thesis.tex}，并把中间文件和 PDF 输出到 \texttt{out/} 目录。
+
+    常用命令如下：
+    \begin{description}
+        \item[\texttt{latexmk}] 编译默认主论文入口，输出 \texttt{out/final\_thesis.pdf}。
+        \item[\texttt{latexmk final\_thesis.tex}] 显式编译主论文。
+        \item[\texttt{latexmk defense\_committee.tex}] 单独编译答辩委员会名单，输出 \texttt{out/defense\_committee.pdf}。
+        \item[\texttt{latexmk response.tex}] 编译盲审意见回复示例。
+        \item[\texttt{latexmk -c}] 清理辅助文件，保留已经生成的 PDF。
+    \end{description}
+
+    \subsection{最小主论文入口}
+
+    一个典型的主论文入口如下。实际模板中的 \texttt{final\_thesis.tex} 已经采用这种结构。
+
+    \begin{verbatim}
+\documentclass[oneside,degree=master,print=final,windows]{GZUthesis}
+\usepackage{gbt7714}
+\usepackage{booktabs}
+
+\input{metadata.tex}
+
+\begin{document}
+  \maketitle
+  \frontmatter
+  \input{chapter/abstract.tex}
+  \tableofcontents
+  \listoffigures
+  \listoftables
+  \printnomenclature
+
+  \mainmatter
+  \input{chapter/intro.tex}
+
+  \bibliographystyle{gbt7714-numerical}
+  \bibliography{reference}
+\end{document}
+    \end{verbatim}
+
+    \subsection{元数据文件示例}
+
+    \texttt{metadata.tex} 应只包含设置命令，不包含 \cs{documentclass} 和 \cs{begin}\{document\}。示例：
+
+    \begin{verbatim}
+\gradyear{2026}
+\major{软件工程}
+\research{软件工程理论与计算理论}
+\author{张三}
+\supervisor{李四\ 教授}
+\stuid{2026010001}
+\title{论文中文题目}
+\entitle{English Thesis Title}
+\department{计算机科学与技术学院}
+\seclvl{公开}
+\classifyno{TP301}
+\udcno{004}
+\degreecategory{学术学位}
+\date{2026年7月22日}
+
+\chairman{贵州大学}{王五}{教授}
+\addexpert{贵州大学}{赵六}{教授}
+\addexpert{某某大学}{钱七}{教授}
+\defsec{周八\ 副教授/博士}
+\defaddr{贵州大学某楼某会议室}
+
+\promisedate{2026}{7}{22}
+\promisenonconfidential
+    \end{verbatim}
+
+    如果需要把签名图片叠加到承诺书上，可以继续加入：
+    \begin{verbatim}
+\studentsignature[2.55cm]{logo/student-signature.png}
+\supervisorsignature[2.55cm]{logo/supervisor-signature.png}
+    \end{verbatim}
+
+    \subsection{输出模式与自动页面}
+
+    \pkg{GZUthesis} 通过 \texttt{print} 选项控制 \cs{maketitle} 生成的页面。
+
+    \begin{description}
+        \item[\texttt{print=review}] 生成盲审封面。该模式不输出个人信息、答辩委员会名单和承诺书。
+        \item[\texttt{print=final}] 生成终稿封面，并自动追加答辩委员会名单和承诺书。承诺书会使用 \texttt{logo/promise-normalized.pdf} 作为底图，并叠加日期、保密勾选和可选签名图片。
+        \item[\texttt{print=draft}] 生成简洁草稿封面，便于写作阶段快速校对正文。
+    \end{description}
+
+    终稿模式下不需要在正文末尾手动调用 \cs{makepromisepage}；\cs{maketitle} 已经会自动处理。若手动再调用一次，会重复生成承诺书。
+
+    \subsection{单独打印答辩委员会名单}
+
+    模板提供 \cs{makedefensepage} 用于单独生成答辩委员会名单。仓库中的 \texttt{defense\_committee.tex} 即为示例：
+
+    \begin{verbatim}
+\documentclass[oneside,degree=master,print=draft,windows]{GZUthesis}
+\input{metadata.tex}
+\begin{document}
+\makedefensepage
+\end{document}
+    \end{verbatim}
+
+    编译命令：
+    \begin{verbatim}
+latexmk defense_committee.tex
+    \end{verbatim}
+
+    如果已经有签字后的答辩委员会名单扫描件，可以在 \texttt{metadata.tex} 中设置：
+    \begin{verbatim}
+\defensepdf{figures/defense-committee-signed.pdf}
+    \end{verbatim}
+    此时 \texttt{print=final} 的主论文和 \cs{makedefensepage} 都会直接插入该 PDF 的第一页，而不是重新排版答辩委员会名单。
+
+    \subsection{承诺书与签名}
+
+    终稿模式会自动插入承诺书。默认情况下，即使没有设置签名图片，也会生成承诺书底图、日期和保密/不保密勾选。常用设置如下：
+
+    \begin{verbatim}
+\promisedate{2026}{7}{22}
+\promisenonconfidential
+
+% 或者：保密 3 年
+\promiseconfidential{3}
+
+% 可选：叠加签名图片
+\studentsignature[2.55cm]{logo/student-signature.png}
+\supervisorsignature[2.55cm]{logo/supervisor-signature.png}
+    \end{verbatim}
+
+    如果签名位置需要微调，可以使用：
+    \begin{verbatim}
+\promiseoriginalitysignatureposition{9.0cm}{18.65cm}
+\promiseauthorizationstudentposition{8.90cm}{5.48cm}
+\promiseauthorizationsupervisorposition{14.25cm}{4.83cm}
+    \end{verbatim}
+
+    也可以使用集中配置接口：
+    \begin{verbatim}
+\promisesetup{
+  student-signature=logo/student-signature.png,
+  supervisor-signature=logo/supervisor-signature.png,
+  student-width=2.55cm,
+  supervisor-width=2.55cm,
+  date-year=2026,
+  date-month=7,
+  date-day=22,
+  confidential=false
+}
+    \end{verbatim}
+
     \subsection{宏包选项}
     \begin{function}[added=2024-08-18]{degree}
         \begin{syntax}
@@ -113,7 +296,7 @@
 
     \begin{optdesc}
         \item[review] 盲审版本，封面不显示个人信息，封面之后无附加信息。
-        \item[final] 最终版本，封面显示个人信息，封面之后显示答辩信息，最后一页显示著作权信息。
+        \item[final] 最终版本，封面显示个人信息，封面之后自动显示答辩委员会名单和承诺书。
         \item[draft] 草稿版本，用于自己校验，只显示正文。
     \end{optdesc}
     
@@ -200,10 +383,10 @@
         \begin{syntax}
             \cs{date}\marg{XXXX年XX月} \\
         \end{syntax}
-        该命令设置日期，默认为当前时间，设置时间只会影响到封面中最后一行的年月信息显示。
+        该命令设置论文日期，默认为当前时间。日期中的年月用于封面底部，完整日期也会同步作为答辩日期。
         日期格式必须为 “XXXX年XX月” 或“XXXX年XX月xx日”，否则可能会报错或显示错误。
         \begin{texnote}
-            该命令为重定义命令，不会覆盖\cs{\@date}。答辩时间不由此设置。
+            该命令为重定义命令，不会覆盖\cs{\@date}。若答辩日期不同于封面日期，可以在 \cs{date} 之后再用 \cs{defdate} 单独覆盖。
         \end{texnote}
 
     \end{function}
@@ -227,17 +410,23 @@
 
     \begin{function}[added=2024-08-18]{\addexpert}
         \begin{syntax}
-            \cs{addexpert}\marg{XXXXXX 大学 XXX+职称} \\
+            \cs{addexpert}\marg{单位}\marg{姓名}\marg{职称} \\
         \end{syntax}
-        该命令为答辩专家列表添加一个专家信息，可以重复调用，只会追加信息。添加格式为 “XXXXXX 大学 XXX+职称”。
+        该命令为答辩专家列表添加一个专家信息，可以重复调用，只会追加信息。
+        \begin{texnote}
+            示例：
+            \begin{verbatim}
+\addexpert{贵州大学}{李XX}{教授}
+            \end{verbatim}
+        \end{texnote}
     \end{function}
 
 
     \begin{function}[added=2024-08-18]{\chairman}
         \begin{syntax}
-            \cs{chairman}\marg{XXXXXX 大学 XXX+职称} \
+            \cs{chairman}\marg{单位}\marg{姓名}\marg{职称} \\
         \end{syntax}
-        该命令设置答辩主席，默认留空。格式为 “XXXXXX 大学 XXX+职称”。
+        该命令设置答辩主席，默认留空。答辩委员会名单中会在该行末尾自动标注“（主席）”。
     \end{function}
 
 
@@ -300,9 +489,26 @@
 
     \begin{function}[added=2024-08-18]{\defaddr}
         \begin{syntax}
-            \cs{defaddr}\marg{答辩地点} \
+            \cs{defaddr}\marg{答辩地点} \\
         \end{syntax}
         该命令设置答辩地点，默认留空。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\defensepdf}
+        \begin{syntax}
+            \cs{defensepdf}\marg{PDF 文件路径}
+        \end{syntax}
+        使用已签字的答辩委员会名单扫描件。设置后，终稿封面之后和 \cs{makedefensepage} 都会直接插入该 PDF 的第一页。
+        \begin{texnote}
+            如果想恢复模板自动排版的答辩委员会名单，可使用 \cs{cleardefensepdf}。
+        \end{texnote}
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\cleardefensepdf}
+        \begin{syntax}
+            \cs{cleardefensepdf}
+        \end{syntax}
+        清除通过 \cs{defensepdf} 设置的扫描件路径，恢复自动排版答辩委员会名单。
     \end{function}
 
 
@@ -316,9 +522,9 @@
 
     \begin{function}[added=2024-08-18]{\defdate}
         \begin{syntax}
-            \cs{defdate}\marg{答辩时间} \
+            \cs{defdate}\marg{答辩时间} \\
         \end{syntax}
-        该命令设置答辩时间，默认留空，免得忘记填写造成错误。
+        该命令设置答辩时间，默认与 \cs{date} 相同。若答辩日期和封面日期不同，可单独设置该命令。
     \end{function}
 
 
@@ -339,13 +545,118 @@
         该命令设置 UDC 分类号，会填充到终稿封面顶部的“UDC 分类号”字段中，默认留空。
     \end{function}
 
+    \begin{function}[added=2026-04-22]{\degreecategory}
+        \begin{syntax}
+            \cs{degreecategory}\marg{学位类别}
+        \end{syntax}
+        设置终稿封面中论文类型下方的学位类别，例如“学术学位”或“专业学位”。
+    \end{function}
+
+    \begin{function}[added=2026-04-22]{\entitle}
+        \begin{syntax}
+            \cs{entitle}\marg{英文题目}
+        \end{syntax}
+        设置英文题目。终稿封面会在中文题目下方显示英文题目，英文摘要标题也会使用该值。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\studentsignature}
+        \begin{syntax}
+            \cs{studentsignature}\oarg{宽度}\marg{图片路径}
+        \end{syntax}
+        设置承诺书中的学生签名图片。可选宽度默认是 \texttt{2.55cm}。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\supervisorsignature}
+        \begin{syntax}
+            \cs{supervisorsignature}\oarg{宽度}\marg{图片路径}
+        \end{syntax}
+        设置承诺书中的导师签名图片。可选宽度默认是 \texttt{2.55cm}。\cs{advisorsignature} 是该命令的同义命令。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\promisedate}
+        \begin{syntax}
+            \cs{promisedate}\marg{年}\marg{月}\marg{日}
+        \end{syntax}
+        设置承诺书中原创性声明和授权声明共用的签署日期。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\promisenonconfidential}
+        \begin{syntax}
+            \cs{promisenonconfidential}
+        \end{syntax}
+        在承诺书中勾选“不保密”。这是模板示例的默认设置。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\promiseconfidential}
+        \begin{syntax}
+            \cs{promiseconfidential}\marg{保密年限}
+        \end{syntax}
+        在承诺书中勾选“保密”，并填写“在若干年解密后适用授权”中的年限。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\promisesetup}
+        \begin{syntax}
+            \cs{promisesetup}\marg{key=value 列表}
+        \end{syntax}
+        集中配置承诺书签名、日期、保密状态和坐标。常用 key 如下：
+        \begin{description}
+            \item[\texttt{student-signature}] 学生签名图片路径。
+            \item[\texttt{supervisor-signature}] 导师签名图片路径，\texttt{advisor-signature} 为同义 key。
+            \item[\texttt{student-width}] 学生签名图片宽度。
+            \item[\texttt{supervisor-width}] 导师签名图片宽度，\texttt{advisor-width} 为同义 key。
+            \item[\texttt{date-year/date-month/date-day}] 承诺书签署日期。
+            \item[\texttt{confidential}] 是否保密，取值为 \texttt{true} 或 \texttt{false}。
+            \item[\texttt{secret-years}] 保密年限，仅保密时使用。
+            \item[\texttt{originality-student-x/originality-student-y}] 原创性声明页学生签名中心位置（相对页面左下角，cm）。
+            \item[\texttt{authorization-student-x/authorization-student-y}] 授权声明页学生签名中心位置（相对页面左下角，cm）。
+            \item[\texttt{authorization-supervisor-x/authorization-supervisor-y}] 授权声明页导师签名中心位置（相对页面左下角，cm）。
+            \item[\texttt{originality-date-y}] 原创性声明页签署日期基线高度（cm）。
+            \item[\texttt{authorization-date-y}] 授权声明页签署日期基线高度（cm）。
+        \end{description}
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\promiseoriginalitysignatureposition}
+        \begin{syntax}
+            \cs{promiseoriginalitysignatureposition}\marg{x}\marg{y}
+        \end{syntax}
+        调整原创性声明页学生签名图片中心位置，坐标为相对页面左下角的厘米数。默认 \texttt{(9.0, 18.65)}。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\promiseauthorizationstudentposition}
+        \begin{syntax}
+            \cs{promiseauthorizationstudentposition}\marg{x}\marg{y}
+        \end{syntax}
+        调整授权声明页学生签名图片中心位置，坐标为相对页面左下角的厘米数。默认 \texttt{(8.90, 5.48)}。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\promiseauthorizationsupervisorposition}
+        \begin{syntax}
+            \cs{promiseauthorizationsupervisorposition}\marg{x}\marg{y}
+        \end{syntax}
+        调整授权声明页导师签名图片中心位置，坐标为相对页面左下角的厘米数。默认 \texttt{(14.25, 4.83)}。
+    \end{function}
+
     \subsubsection{控制类命令}
 
     \begin{function}[added=2024-08-18]{\maketitle}
         \begin{syntax}
             \cs{maketitle}
         \end{syntax}
-        根据本文前述信息生成封面以及答辩信息（如果有）。
+        根据本文前述信息生成封面和前置附加页。具体输出由 \texttt{print} 选项决定：盲审模式只生成盲审封面，终稿模式生成终稿封面、答辩委员会名单和承诺书，草稿模式生成简洁草稿封面。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\makedefensepage}
+        \begin{syntax}
+            \cs{makedefensepage}
+        \end{syntax}
+        单独生成答辩委员会名单。推荐在 \texttt{defense\_committee.tex} 中使用，并与主论文共用 \texttt{metadata.tex}。
+    \end{function}
+
+    \begin{function}[added=2026-07-22]{\makepromisepage}
+        \begin{syntax}
+            \cs{makepromisepage}
+        \end{syntax}
+        手动生成承诺书页。一般不需要直接调用，因为 \texttt{print=final} 下 \cs{maketitle} 会自动插入承诺书。
     \end{function}
 
     \begin{function}[added=2024-08-18]{\frontmatter}
@@ -401,10 +712,9 @@
 
     \begin{function}[added=2026-04-29]{\abbritem}
         \begin{syntax}
-            \cs{abbritem}\marg{中文名称}\marg{英文全称}\marg{缩写}\\
-            \cs{abbritem}\oarg{分组}\marg{中文名称}\marg{英文全称}\marg{缩写}
+            \cs{abbritem}\marg{中文名称}\marg{英文全称}\marg{缩写}
         \end{syntax}
-        在当前位置输出“中文名称（英文全称，缩写）”，同时登记到缩略语表。可选分组默认为 A。
+        在当前位置输出“中文名称（英文全称，缩写）”，同时登记到缩略语表。
     \end{function}
 
     \begin{function}[added=2026-04-29]{\nomdef}
@@ -422,18 +732,16 @@
 
     \begin{function}[added=2026-04-29]{\nomitem}
         \begin{syntax}
-            \cs{nomitem}\marg{中文术语}\marg{英文术语}\\
-            \cs{nomitem}\oarg{分组}\marg{中文术语}\marg{英文术语}
+            \cs{nomitem}\marg{中文术语}\marg{英文术语}
         \end{syntax}
-        在当前位置输出“中文术语（英文术语）”，同时登记到术语表。可选分组默认为 N。
+        在当前位置输出“中文术语（英文术语）”，同时登记到术语表。
     \end{function}
 
     \begin{function}[added=2026-04-29]{\termitem}
         \begin{syntax}
-            \cs{termitem}\marg{中文术语}\marg{解释}\\
-            \cs{termitem}\oarg{分组}\marg{中文术语}\marg{解释}
+            \cs{termitem}\marg{中文术语}\marg{解释}
         \end{syntax}
-        在当前位置输出“中文术语”，同时登记到术语表。可选分组默认为 N。
+        在当前位置输出“中文术语”，同时登记到术语表。
     \end{function}
 
     \begin{function}[added=2026-04-29]{\symbolitem}

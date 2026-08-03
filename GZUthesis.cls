@@ -9,7 +9,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%% 类声明与基础依赖 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesClass{GZUthesis}[2026/05/02 v2.0.0 Guizhou University Thesis Template]
+\ProvidesClass{GZUthesis}[2026/07/22 v2.1.0 Guizhou University Thesis Template]
 \LoadClass[cs4size,a4paper,fancyhdr,fntef,oneside]{book}
 \RequirePackage{xkeyval}
 \RequirePackage{ifthen}
@@ -50,6 +50,25 @@
 \def\GZU@defsec{} % 答辩秘书
 \def\GZU@classifyno{} % 中图分类号
 \def\GZU@udcno{} % UDC 分类号
+\def\GZU@defense@pdf{} % 已签字答辩委员会名单扫描件
+\def\GZU@promise@student@signature{} % 原创性声明学生签名
+\def\GZU@promise@supervisor@signature{} % 授权声明导师签名
+\def\GZU@promise@student@width{2.55cm}
+\def\GZU@promise@supervisor@width{2.55cm}
+\def\GZU@promise@date@year{\the\year}
+\def\GZU@promise@date@month{\the\month}
+\def\GZU@promise@date@day{\the\day}
+\def\GZU@promise@secret@years{}
+\def\GZU@promise@orig@student@x{9.0cm}
+\def\GZU@promise@orig@student@y{18.65cm}
+\def\GZU@promise@auth@student@x{8.90cm}
+\def\GZU@promise@auth@student@y{5.48cm}
+\def\GZU@promise@auth@supervisor@x{14.25cm}
+\def\GZU@promise@auth@supervisor@y{4.83cm}
+\def\GZU@promise@orig@date@y{18.38cm}
+\def\GZU@promise@auth@date@y{4.10cm}
+\newif\ifGZU@promise@secret
+\GZU@promise@secretfalse
 
 %% 根据其他信息生成或排版时复用的变量。
 \def\GZU@date@year{ \the\year}
@@ -79,9 +98,20 @@
 \newlength{\GZU@finalmaxcontentlen}
 
 %% 将中文日期拆为年月，供封面显示。
+\def\GZU@date@nil{\GZU@date@nil}
 \def\parsedate#1年#2月#3\endparse{%
-	\def\GZU@date@year{#1}
-	\def\GZU@date@month{#2}
+	\global\def\GZU@date@year{#1}
+	\global\def\GZU@date@month{#2}
+}
+\def\GZU@parsedate#1{%
+	\GZU@@parsedate#1年\GZU@date@nil月\GZU@date@nil\endparse
+}
+\def\GZU@@parsedate#1年#2月#3\endparse{%
+	\def\GZU@date@testmonth{#2}%
+	\ifx\GZU@date@testmonth\GZU@date@nil
+	\else
+		\parsedate#1年#2月#3\endparse
+	\fi
 }
 
 %% 封面、答辩页和目录中使用的固定文本。
@@ -123,12 +153,14 @@
 \newif\ifcheckhwxk
 \newif\ifenablewatermark % 是否使用空白页水印
 \newif\ifGZU@intable
+\newif\ifGZU@topics@ready
 \doctortrue
 \drafttrue
 \gradtrue
 \checktnrafalse
 \checkhwxkfalse
 \enablewatermarkfalse
+\GZU@topics@readyfalse
 
 %% 学位类型：博士、硕士、本科。
 \define@choicekey*+{GZUthesis}{degree}[\val\position]{doctor,master,bachelor}[doctor]{%
@@ -186,6 +218,7 @@
 \RequirePackage{hyperref}
 \RequirePackage[title,toc]{appendix}
 \RequirePackage{setspace,titletoc,fancyhdr,pdfpages,ulem}
+\RequirePackage{graphicx,tikz}
 \RequirePackage{bicaption}
 
 %%% 用户命令 %%%
@@ -210,7 +243,8 @@
 \newcommand{\GZU@committee@row}[4]{%
 	\GZU@committee@spread{\GZU@committee@unitwidth}{#1} &
 	\GZU@committee@spread{\GZU@committee@namewidth}{#2} &
-	\GZU@committee@spread{\GZU@committee@titlewidth}{#3}#4\\
+	\GZU@committee@spread{\GZU@committee@titlewidth}{#3} &
+	\GZU@tablesep\makebox[6em]{\rule{6em}{0.4pt}}#4\\
 }
 \let\GZU@committee@entry\GZU@committee@row
 %% 添加答辩专家
@@ -242,12 +276,19 @@
 \newcommand{\department}[1]{\global\def\GZU@department{#1}}
 %% 答辩地点
 \newcommand{\defaddr}[1]{\global\def\GZU@defaddr{#1}}
+%% 使用已签字的答辩委员会名单扫描件
+\newcommand{\defensepdf}[1]{\global\def\GZU@defense@pdf{#1}}
+\newcommand{\cleardefensepdf}{\global\def\GZU@defense@pdf{}}
 %% 毕业年份
 \newcommand{\gradyear}[1]{\global\def\GZU@gradyear{#1}}
 %% 答辩时间
 \newcommand{\defdate}[1]{\global\def\GZU@defdate{#1}}
 %% 日期
-\renewcommand{\date}[1]{\global\def\GZU@date{#1}}
+\renewcommand{\date}[1]{%
+	\global\def\GZU@date{#1}%
+	\global\def\GZU@defdate{#1}%
+	\GZU@parsedate{#1}%
+}
 %% 密级
 \newcommand{\seclvl}[1]{\global\def\GZU@seclvl{#1}}
 %% 中图分类号
@@ -255,6 +296,67 @@
 %% UDC 分类号
 \newcommand{\udcno}[1]{\global\def\GZU@udcno{#1}}
 \newcommand{\degreecategory}[1]{\global\def\GZU@degreecategory{#1}}
+%% 原创性声明与授权声明签名
+\newcommand{\studentsignature}[2][2.55cm]{%
+	\global\def\GZU@promise@student@width{#1}%
+	\global\def\GZU@promise@student@signature{#2}%
+}
+\newcommand{\supervisorsignature}[2][2.55cm]{%
+	\global\def\GZU@promise@supervisor@width{#1}%
+	\global\def\GZU@promise@supervisor@signature{#2}%
+}
+\let\advisorsignature\supervisorsignature
+\newcommand{\promisedate}[3]{%
+	\global\def\GZU@promise@date@year{#1}%
+	\global\def\GZU@promise@date@month{#2}%
+	\global\def\GZU@promise@date@day{#3}%
+}
+\newcommand{\promisenonconfidential}{%
+	\GZU@promise@secretfalse
+	\global\def\GZU@promise@secret@years{}%
+}
+\newcommand{\promiseconfidential}[1]{%
+	\GZU@promise@secrettrue
+	\global\def\GZU@promise@secret@years{#1}%
+}
+\newcommand{\promiseoriginalitysignatureposition}[2]{%
+	\global\def\GZU@promise@orig@student@x{#1}%
+	\global\def\GZU@promise@orig@student@y{#2}%
+}
+\newcommand{\promiseauthorizationstudentposition}[2]{%
+	\global\def\GZU@promise@auth@student@x{#1}%
+	\global\def\GZU@promise@auth@student@y{#2}%
+}
+\newcommand{\promiseauthorizationsupervisorposition}[2]{%
+	\global\def\GZU@promise@auth@supervisor@x{#1}%
+	\global\def\GZU@promise@auth@supervisor@y{#2}%
+}
+\pgfkeys{
+	/GZU/promise/.is family,
+	/GZU/promise,
+	student-signature/.code={\global\def\GZU@promise@student@signature{#1}},
+	supervisor-signature/.code={\global\def\GZU@promise@supervisor@signature{#1}},
+	advisor-signature/.code={\global\def\GZU@promise@supervisor@signature{#1}},
+	student-width/.store in=\GZU@promise@student@width,
+	supervisor-width/.store in=\GZU@promise@supervisor@width,
+	advisor-width/.store in=\GZU@promise@supervisor@width,
+	date-year/.store in=\GZU@promise@date@year,
+	date-month/.store in=\GZU@promise@date@month,
+	date-day/.store in=\GZU@promise@date@day,
+	secret-years/.store in=\GZU@promise@secret@years,
+	confidential/.is choice,
+	confidential/true/.code={\GZU@promise@secrettrue},
+	confidential/false/.code={\GZU@promise@secretfalse},
+	originality-student-x/.store in=\GZU@promise@orig@student@x,
+	originality-student-y/.store in=\GZU@promise@orig@student@y,
+	authorization-student-x/.store in=\GZU@promise@auth@student@x,
+	authorization-student-y/.store in=\GZU@promise@auth@student@y,
+	authorization-supervisor-x/.store in=\GZU@promise@auth@supervisor@x,
+	authorization-supervisor-y/.store in=\GZU@promise@auth@supervisor@y,
+	originality-date-y/.store in=\GZU@promise@orig@date@y,
+	authorization-date-y/.store in=\GZU@promise@auth@date@y,
+}
+\newcommand{\promisesetup}[1]{\pgfkeys{/GZU/promise,#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%% 字体族加载与字体样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -585,18 +687,26 @@
 }
 
 %% 根据论文类型设置封面主题并制作题名页。
-\newcommand\GZU@mktitle{%
-	\ifdoctor
-		\global\def\GZU@final@topic{博士学位论文}
-		\global\def\GZU@review@topic{\GZU@gradyear 届博士学位论文}
-		\global\edef\GZU@defense@topic{博\GZU@defense@topic}
-	\else\ifmaster
-			\global\def\GZU@final@topic{硕士学位论文}
-			\global\def\GZU@review@topic{\GZU@gradyear 届硕士学位论文}
-			\global\edef\GZU@defense@topic{硕\GZU@defense@topic}
+\newcommand\GZU@setup@topics{%
+	\ifGZU@topics@ready
+	\else
+		\ifdoctor
+			\global\def\GZU@final@topic{博士学位论文}
+			\global\def\GZU@review@topic{\GZU@gradyear 届博士学位论文}
+			\global\edef\GZU@defense@topic{博\GZU@defense@topic}
+		\else\ifmaster
+				\global\def\GZU@final@topic{硕士学位论文}
+				\global\def\GZU@review@topic{\GZU@gradyear 届硕士学位论文}
+				\global\edef\GZU@defense@topic{硕\GZU@defense@topic}
 			\else
 				\ClassError{GZUthesis}{type error: no impl for bachelor}{Bachelor thesis cover is not implemented.}
 			\fi\fi
+		\global\GZU@topics@readytrue
+	\fi
+}
+
+\newcommand\GZU@mktitle{%
+	\GZU@setup@topics
 	\GZU@mkpage@gradtitle
 }
 
@@ -605,7 +715,7 @@
 	\GZU@geometry@cover
 	\ifreview    \GZU@mkpage@gradreview\fi
 
-	\iffinal\GZU@mkpage@gradfinal\GZU@mkpage@defense\fillblankpage\includepdf{logo/promise.pdf}\fi
+	\iffinal\GZU@mkpage@gradfinal\GZU@mkpage@defenseauto\makepromisepage\fi
 
 	\ifdraft\GZU@mkpage@graddraft\fi
 
@@ -749,13 +859,23 @@
 	\restoregeometry
 }
 
-%% 制作答辩信息页。
+%% 制作答辩信息页；若设置了 \defensepdf，则直接插入签字扫描件。
+\newcommand\GZU@mkpage@defenseauto{%
+	\ifx\GZU@defense@pdf\@empty
+		\GZU@mkpage@defense
+	\else
+		\GZU@mkpage@defensepdf
+	\fi
+}
+\newcommand\GZU@mkpage@defensepdf{%
+	\includepdf[pages=1,fitpaper=true,pagecommand={\thispagestyle{empty}}]{\GZU@defense@pdf}%
+}
 \newcommand\GZU@mkpage@defense{%
 	\thispagestyle{empty}
 
 	~\vskip 60pt
 
-  \noindent\centerline{\GZU@font@defense@topic\GZU@defense@topic}
+	\noindent\centerline{\GZU@font@defense@topic\GZU@defense@topic}
 
 	\vspace{55pt}
 	\noindent
@@ -766,10 +886,10 @@
 			\end{center}
 		\end{minipage}
 	\end{center}
-	\vskip 60pt
+	\vskip 70pt
 
 	\hskip 40pt
-	\begin{minipage}{.6\linewidth}
+	\begin{minipage}{.8\linewidth}
 		\renewcommand{\do}[1]{##1}%
 		\begin{spacing}{1.6}
 			\GZU@font@defense@main
@@ -782,8 +902,7 @@
 			{\let\GZU@committee@entry\GZU@committee@measure
 				\GZU@chairman
 				\dolistloop\GZU@experts}%
-			\begin{tabular}[t]{@{}l@{\hspace{5em}}l@{\hspace{2em}}l@{}}
-				\GZU@font@defense@main
+			\begin{tabular}[t]{@{}l@{\hspace{3em}}l@{\hspace{2em}}l@{\hspace{1em}}l@{}}
 				\GZU@chairman
 				\dolistloop\GZU@experts
 			\end{tabular}
@@ -796,6 +915,12 @@
 			\GZU@defense@address\GZU@tablesep   \GZU@defaddr
 		\end{spacing}
 	\end{minipage}
+}
+\newcommand{\makedefensepage}{%
+	\GZU@setup@topics
+	\GZU@geometry@cover
+	\GZU@mkpage@defenseauto
+	\restoregeometry
 }
 
 %% 制作草稿封面。
@@ -821,6 +946,60 @@
 		{\thispagestyle{empty} \clearpage}
 	}%
 }
+\newcommand{\GZU@promise@studentsignature}{%
+	\ifx\GZU@promise@student@signature\@empty
+	\else
+		\includegraphics[width=\GZU@promise@student@width]{\GZU@promise@student@signature}%
+	\fi
+}
+\newcommand{\GZU@promise@supervisorsignature}{%
+	\ifx\GZU@promise@supervisor@signature\@empty
+	\else
+		\includegraphics[width=\GZU@promise@supervisor@width]{\GZU@promise@supervisor@signature}%
+	\fi
+}
+\newcommand{\GZU@promise@date}[1]{%
+	\node[anchor=base,fill=white,inner sep=0.5pt] at ([xshift=13.15cm,yshift=#1]current page.south west)
+		{\GZU@promise@date@year};
+	\node[anchor=base,fill=white,inner sep=0.5pt] at ([xshift=14.85cm,yshift=#1]current page.south west)
+		{\GZU@promise@date@month};
+	\node[anchor=base,fill=white,inner sep=0.5pt] at ([xshift=16.25cm,yshift=#1]current page.south west)
+		{\GZU@promise@date@day};
+}
+\newcommand{\GZU@mkpage@promise}{%
+	\thispagestyle{empty}%
+	\begin{tikzpicture}[remember picture,overlay]
+		\node[anchor=south west,inner sep=0pt] at (current page.south west)
+			{\includegraphics[width=\paperwidth,height=\paperheight]{logo/promise-normalized.pdf}};
+
+		\node[anchor=center] at ([xshift=\GZU@promise@orig@student@x,yshift=\GZU@promise@orig@student@y]current page.south west)
+			{\GZU@promise@studentsignature};
+		\GZU@promise@date{\GZU@promise@orig@date@y}
+
+		\ifGZU@promise@secret
+			\node[anchor=base] at ([xshift=6.48cm,yshift=8.50cm]current page.south west)
+				{\Large $\sqrt{}$};
+			\node[anchor=base,fill=white,inner sep=0.5pt] at ([xshift=9.52cm,yshift=8.50cm]current page.south west)
+				{\GZU@promise@secret@years};
+		\else
+			\node[anchor=base] at ([xshift=6.48cm,yshift=7.72cm]current page.south west)
+				{\Large $\sqrt{}$};
+		\fi
+
+		\node[anchor=center] at ([xshift=\GZU@promise@auth@student@x,yshift=\GZU@promise@auth@student@y]current page.south west)
+			{\GZU@promise@studentsignature};
+		\node[anchor=base] at ([xshift=\GZU@promise@auth@supervisor@x,yshift=\GZU@promise@auth@supervisor@y]current page.south west)
+			{\GZU@promise@supervisorsignature};
+		\GZU@promise@date{\GZU@promise@auth@date@y}
+	\end{tikzpicture}%
+	\null
+	\clearpage
+}
+\newcommand{\GZU@includepromise}{%
+	\fillblankpage
+	\GZU@mkpage@promise
+}
+\newcommand{\makepromisepage}{\iffinal\ifgrad\GZU@includepromise\fi\fi}
 %%%%%%%%%%%%%%%%%%%%%%%% 页面样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 正文前页码样式。
 \fancypagestyle{GZU@front}{%

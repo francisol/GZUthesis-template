@@ -1,0 +1,69 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{reviewresponse-content}[2026/07/18 Semantic commands for thesis review responses and overview page]
+
+\RequirePackage{xparse}
+\RequirePackage{needspace}
+\RequirePackage{etoolbox}
+
+
+% A front-matter overview page intended for members of the defence committee.
+% It is deliberately typographic: no rules, boxes, colours, or decorative marks.
+\NewDocumentEnvironment{modificationoverview}{}{%
+  \clearpage
+  \thispagestyle{empty}%
+  \begingroup
+  \setlength{\parindent}{2em}%
+  \setstretch{1.23}%
+  \setlength{\parskip}{0.18\baselineskip}%
+  \vspace*{0.35cm}%
+  \begin{center}
+    {\zihao{3}\bfseries 修改概况\par}
+  \end{center}
+  \vspace{0.55cm}%
+  \zihao{5}%
+}{%
+  \par
+  \endgroup
+  \clearpage
+}
+
+% Each expert is represented by a normal \section. The comment counter
+% restarts automatically when a new section begins.
+\newcounter{reviewcomment}
+\pretocmd{\section}{\setcounter{reviewcomment}{0}}{}{}
+
+\NewDocumentCommand{\reviewcomment}{+m}{%
+  \Needspace{4\baselineskip}%
+  \refstepcounter{reviewcomment}%
+  \par\addvspace{0.95\baselineskip}%
+  \noindent\textbf{审稿意见~\arabic{reviewcomment}：}%
+  \ignorespaces#1\par
+  \addvspace{0.38\baselineskip}%
+}
+
+\NewDocumentCommand{\reviewresponse}{+m}{%
+  \par\noindent\textbf{回复：}%
+  \ignorespaces#1\par
+  \addvspace{0.38\baselineskip}%
+}
+
+\NewDocumentCommand{\reviewchange}{+m}{%
+  \par\noindent\textbf{修改：}%
+  \ignorespaces#1\par
+  \addvspace{0.20\baselineskip}%
+}
+
+% Revised thesis excerpts. Kaishu and indentation distinguish quoted thesis
+% text from the response while keeping the page suitable for monochrome print.
+\NewDocumentEnvironment{changes}{}{%
+  \par\addvspace{0.28\baselineskip}%
+  \begingroup
+  \small\kaishu
+  \setlength{\leftskip}{2em}%
+  \setlength{\rightskip}{2em}%
+  \setlength{\parindent}{2em}%
+  \setlength{\parskip}{0.15em}%
+}{%
+  \par\endgroup
+  \addvspace{0.55\baselineskip}%
+}
